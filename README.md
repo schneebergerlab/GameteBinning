@@ -5,7 +5,7 @@ Here we introduce the pipeline for gamete binning, a method based on single-cell
 
 Pre-requisite
 =
-Note: except the self-developed tools (for installation, please check INSTALL), a few publicly available tools are also need,
+Note 1: except the self-developed tools (for installation, please check INSTALL), a few publicly available tools are also need,
 
 * [bowtie2](https://github.com/BenLangmead/bowtie2)
 * [samtools](https://github.com/samtools/)
@@ -13,3 +13,5 @@ Note: except the self-developed tools (for installation, please check INSTALL), 
 * [SHOREmap](http://bioinfo.mpipz.mpg.de/shoremap/)
 * [KMC](https://github.com/refresh-bio/KMC)
 * ...
+
+Note 2: [zlib.h](https://github.com/madler/zlib) is required by some tools (for the purpose of zipping files), please also install accordingly.

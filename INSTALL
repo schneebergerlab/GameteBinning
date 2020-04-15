@@ -1,0 +1,25 @@
+# git the respository
+
+git clone https://github.com/schneebergerlab/GameteBinning.git
+
+# install library dependency
+
+cd GameteBinnin
+cd dependency_src_gzstream/
+
+make clean
+make
+
+cp libgzstream.a ../src_asCellseparator/gzlib
+cp libgzstream.a ../src_as10xbamFqer/gzlib
+
+cd ..
+
+# install the main tool: asPollinator_v6.1 for phasing
+
+make
+
+# install other necessary tools
+
+srcall=`echo src_*/`
+for src in ${srcall}; do cd ./${src}; make; cd ..; done
