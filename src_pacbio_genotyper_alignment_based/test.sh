@@ -1,0 +1,15 @@
+# 
+
+#ln -s /netscratch/dep_mercier/grp_schneeberger/projects/mutation_tree/Apricot/Pollen-b/z_related_species_reference_based/z_2019_RP_PacbioRead_to_manually_purged_assembly/RP_pacbio_manual_purged_ref.sam RP_pacbio_manual_purged_ref.sam
+
+#ln -s /netscratch/dep_mercier/grp_schneeberger/projects/mutation_tree/Apricot/zzz2019.10.30_Project_4350_CNV_Plum_Apricot_4279_resequencing_16bp_out/zPhasing_cells/z20191101_phasing_markers_with_correction_pollen_AB_subset895_samples_Marker_MQ100plusManualp0p38AF_scorep81_tmp_pollen_genotypes/s4_phased_markers.txt s4_phased_markers.txt
+
+#ln -s /biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/test0_s2_genotype_contig_seq_del_like.txt phased_s2_genotype_contig_seq_del_like.txt 
+
+
+ls RP_pacbio_manual_purged_ref_head10000.sam s4_phased_markers.txt phased_s2_genotype_contig_seq_del_like.txt zphase_contigs_linksage.txt
+
+pacbio_genotyper --sam RP_pacbio_manual_purged_ref_head10000.sam --marker s4_phased_markers.txt --marker2 phased_s2_genotype_contig_seq_del_like.txt --phase zphase_contigs_linksage.txt --ims 0.81 -o test0 >test0.log
+
+
+

@@ -1,0 +1,8 @@
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group1.txt
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group2.txt
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group3.txt
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group4.txt
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group5.txt
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group6.txt
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group7.txt
+/biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_asScaffolder/maps/map_group8.txt

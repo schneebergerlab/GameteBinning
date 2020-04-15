@@ -1,0 +1,2 @@
+#0Total_raw_readpair * Align_rate = Aligned_readpair  ::::  251402 * 91.21 = 229304
+#0Contig	Start	End	Raw_count	Normalized_RPKM	Normalized_CPM	1_based_pollen_id=input_cell_order	sample/barcode

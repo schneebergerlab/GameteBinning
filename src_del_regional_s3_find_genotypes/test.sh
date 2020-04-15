@@ -1,0 +1,10 @@
+cd /biodata/dep_coupland/grp_schneeberger/projects/methods/src_shq/z_asPollinator_2019/src_del_regional_s3_find_genotypes/
+
+cells=/netscratch/dep_mercier/grp_schneeberger/projects/mutation_tree/Apricot/zzz2019.10.30_Project_4350_CNV_Plum_Apricot_4279_resequencing_16bp_out/pollen_AB_subset895_LessPMMP_samples_list.txt
+depth=/netscratch/dep_mercier/grp_schneeberger/projects/mutation_tree/Apricot/zzz2019.10.30_Project_4350_CNV_Plum_Apricot_4279_resequencing_16bp_out/zPhasing_cells_deletion_like/del_like_isize2000_20190819_converted_variant_del_like_interval_avg_depth_sorted.bed
+
+
+depth=./data/del_like_isize2000_20190819_converted_variant_del_like_interval_avg_depth_sorted.bed
+cells=./data/pollen_AB_subset895_LessPMMP_samples_list_fullvarlist_20191231.txt
+
+del_marker_genotyper --pollen ${cells} --leaf-depth ${depth} --sample 8 --barcode 9 -o test > test_del_marker_genotyper.log

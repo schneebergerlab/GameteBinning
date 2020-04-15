@@ -1,0 +1,8 @@
+# /netscratch/dep_mercier/grp_schneeberger/projects/mutation_tree/Apricot/zCodeTest_asPollinator_HQ/marker_new20191028_tuning_MQ100_with_MQ200/20191028_new_marker_set_MQ100plusManual_sorted_update.txt
+
+
+region=/netscratch/dep_mercier/grp_schneeberger/projects/mutation_tree/Apricot/zzz2019.10.30_Project_4350_CNV_Plum_Apricot_4279_resequencing_16bp_out/zPhasing_cells_deletion_like/del_like_isize2000_20190819_converted_variant.bed
+depth=/netscratch/dep_mercier/grp_schneeberger/projects/mutation_tree/Apricot/zzz2019.10.30_Project_4350_CNV_Plum_Apricot_4279_resequencing_16bp_out/zPhasing_cells_deletion_like/del_like_isize2000_20190819_converted_variant.bed.depth
+
+del_depth_finder --region ${region} --depth ${depth} --hap-hom-cutoff 200 -o fun
+
