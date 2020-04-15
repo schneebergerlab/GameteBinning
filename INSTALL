@@ -2,7 +2,7 @@
 
 git clone https://github.com/schneebergerlab/GameteBinning.git
 
-# install library dependency
+# install library dependency. Note: this needs c library [zlib.h](https://github.com/madler/zlib)
 
 cd GameteBinnin
 cd dependency_src_gzstream/
@@ -23,3 +23,8 @@ make
 
 srcall=`echo src_*/`
 for src in ${srcall}; do cd ./${src}; make; cd ..; done
+
+# add the dev_bin to your environmental PATH variable.
+
+cwp=`pwd`
+export PATH=${cwp}/dev_bin:$PATH
