@@ -5,7 +5,7 @@ Here we introduce the pipeline for gamete binning, a method based on single-cell
 
 Pre-requisite
 =
-Note 1: except the self-developed tools (for installation, please check INSTALL), a few publicly available tools are also need,
+Note 1: except the self-developed tools (for installation, please check INSTALL), a few publicly available tools are also needed,
 
 * [bowtie2](https://github.com/BenLangmead/bowtie2)
 * [samtools](https://github.com/samtools/)
