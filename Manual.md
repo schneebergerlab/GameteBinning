@@ -15,6 +15,8 @@ single cell sequencing of gamete genomes, supposing the following are ready:
 
     canu -p preasm -d canu_preasm useGrid=false genomeSize=242500000 corMhapSensitivity=high corMinCoverage=0 corOutCoverage=100 correctedErrorRate=0.105 -pacbio-raw long_reads_raw.fa executiveThreads=20 >canu_preasm.log
 
+or,
+
     flye --pacbio-raw long_reads_raw.fa --genome-size 243m --out-dir flye_preasm --threads 4
 
 ##### Curation of assembly (with purge_haplotigs pipeline)
