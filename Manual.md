@@ -11,8 +11,11 @@ single cell sequencing of gamete genomes, supposing the following are ready:
 * gamete_R1.fastq.gz, gamete_R2.fastq.gz
 
 
-##### S1. Trim 10x barcodes
+##### S1. Trim reads
 
+Trim 16 bp barcodes off R1's (10x Genomics library setting)
+
+    T10X_barcode_trimmer gamete_R1.fastq.gz gamete_R2.fastq.gz
 
 This leads to
 
@@ -54,6 +57,10 @@ This leads to curated assembly
 ##### S5. Read alignment of pooled gamete nuclei for SNP marker definition
 
 ##### S6. Read alignment of individual gamete nuclei
+
+Extract individual nuclei
+
+Align reads of each nuclei to the curated assembly
 
 ##### S7. Variant calling (individual gamete nuclei)
 
