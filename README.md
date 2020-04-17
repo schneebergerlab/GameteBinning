@@ -15,6 +15,8 @@ Note 1: except the self-developed tools (for installation, please check INSTALL)
 * [Canu v1.7](https://github.com/marbl/canu)
 * [Flye 2.6-g6f887ae](https://github.com/fenderglass/Flye)
 * [purge_haplotigs](https://github.com/skingan/purge_haplotigs_multiBAM)
+* [jellyfish 2.2.10](https://github.com/gmarcais/Jellyfish)
+* [findGSE](https://github.com/schneebergerlab/findGSE)
 * ...
 
 Note 2: [zlib.h](https://github.com/madler/zlib) is required by some tools (for the purpose of zipping files), please also install accordingly.
