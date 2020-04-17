@@ -27,6 +27,7 @@ Count k-mers
     jellyfish histo -h 200000 -o gamete_21mer_trimmed.histo gamete_21mer_trimmed
 
 Estimate genome size ~ 242.5 Mb
+
     R
     library("findGSE")
     findGSE(histo="gamete_21mer_trimmed.histo", sizek=21, outdir=".", exp_hom=200)
