@@ -22,7 +22,7 @@ This leads to
 * gamete_R1_clean.fastq.gz, gamete_R2_clean.fastq.gz
 
 
-##### S2. Genome size estimation
+##### S2. Genome size estimation with cleaned reads
 
 Count k-mers
 
