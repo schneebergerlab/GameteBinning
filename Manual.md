@@ -49,3 +49,24 @@ This leads to preliminary assembly
 This leads to curated assembly
 
 * curated_asm.fasta
+
+
+##### S5. Read alignment of pooled gamete nuclei for SNP marker definition
+
+##### S6. Read alignment of individual gamete nuclei
+
+##### S7. Variant calling (individual gamete nuclei)
+
+##### S8. Extract allele count (individual gamete nuclei) at SNP markers
+
+##### S9. Phasing SNPs within gamete genomes.
+
+##### S10. Contig grouping and genetic mapping using JoinMap4.0
+
+##### S11. Deletion marker definition
+
+##### S12. Genetic map completing
+
+##### S12. Long read separation
+
+##### S13. Independent haplotype assemblies within each linkage group
