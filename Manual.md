@@ -57,7 +57,7 @@ This leads to curated assembly
 
 ##### S7. Variant calling (individual gamete nuclei)
 
-##### S8. Extract allele count (individual gamete nuclei) at SNP markers
+##### S8. Extract allele count (individual gamete nuclei) at SNP markers
 
 ##### S9. Phasing SNPs within gamete genomes.
 
