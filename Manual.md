@@ -8,25 +8,25 @@ Reads should include long reads (e.g., PacBio/Nanopore) from somatic tissue and 
 single cell sequencing of gamete genomes, supposing the following are ready:
 
 * long_reads_raw.fa
-* gamete_R1.fastq.gz, gamete_R2.fastq.gz
+* gamete_libx_R1.fastq.gz, gamete_libx_R2.fastq.gz
 
 
 ##### S1. Trim reads
 
 Trim 16 bp barcodes off R1's (10x Genomics library setting)
 
-    T10X_barcode_trimmer gamete_R1.fastq.gz gamete_R2.fastq.gz
+    T10X_barcode_trimmer gamete_libx_R1.fastq.gz gamete_libx_R2.fastq.gz
 
 This leads to
 
-* gamete_R1_clean.fastq.gz, gamete_R2_clean.fastq.gz
+* gamete_libx_R1_clean.fastq.gz, gamete_libx_R2_clean.fastq.gz
 
 
 ##### S2. Genome size estimation with cleaned reads
 
 Count k-mers
 
-    zcat gamete_R1_clean.fastq.gz gamete_R2_clean.fastq.gz | jellyfish count /dev/fd/0  -C -o gamete_21mer_trimmed -m 21 -t 20 -s 5G
+    zcat gamete_libx_R1_clean.fastq.gz gamete_libx_R2_clean.fastq.gz | jellyfish count /dev/fd/0  -C -o gamete_21mer_trimmed -m 21 -t 20 -s 5G
     jellyfish histo -h 200000 -o gamete_21mer_trimmed.histo gamete_21mer_trimmed
 
 Estimate genome size ~ 242.5 Mb
@@ -48,6 +48,8 @@ This leads to preliminary assembly
 * preasm.fasta
 
 ##### S4. Curation of assembly (with purge_haplotigs pipeline)
+
+
 
 This leads to curated assembly
 
