@@ -1,7 +1,7 @@
 Gamete binning
 =
 
-Here we introduce the pipeline for gamete binning, a method based on single-cell sequencing of gamete genomes to achieve haplotype-resolved chromosome-level genome assembly of a heterozygous species. This is to support the analysis in Campoy_and_Sun_et.al_2020.
+Here we introduce the pipeline for gamete binning, a method based on single-cell sequencing of gamete genomes to achieve haplotype-resolved chromosome-level genome assembly of a heterozygous species. This is to support the analysis in Campoy_and_Sun_et_al_2020.
 
 Pre-requisite
 =
