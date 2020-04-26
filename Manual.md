@@ -171,10 +171,21 @@ Extract individual nuclei
     min_readpair=10000000
     asCellseparator ${barcode_len} ${R1} ${R2} ${minimumRP} ${min_readpair} cells_sep
 
+This would report something like below,
+
+   Info: R1 file: 4279_A_fqfrom10xBam_bxCorrected_R1.fq.gz
+   Info: total number of barcodes observed in file1: 8656307
+   Info: total number of reads    observed in file1: 124447727
+         among the above, good with read pairs >= 5000: 
+               number of barcodes observed in file1: 401
+               number of reads    observed in file1: 103317664
+   Info: number of effective barcodes: 401
+
+
 Get list of good barcodes,
 
-    cd /path/to/sample_A_asCellseparator
-    awk '$2>=5000' asCellseparator_intermediate_raw_barcode_stat.txt > A_barcode_over_5000rpairs.list
+    cd /path/to/cells_sep
+    awk '$2>=5000' asCellseparator_intermediate_raw_barcode_stat.txt > barcode_over_5000rpairs.list
 
 ##### step 7. Read alignment of individual gamete nuclei
 
