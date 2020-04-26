@@ -24,3 +24,14 @@ Note 2: except the self-developed tools (for installation, please check INSTALL)
 * [blast](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
 * [cellranger-dna](https://support.10xgenomics.com/single-cell-dna/software/pipelines/latest/what-is-cell-ranger-dna)
 * ...
+
+Installation of self-developed tools
+=
+
+Please check [INSTALL](https://github.com/schneebergerlab/GameteBinning/blob/master/INSTALL).
+
+Pipeline of assembly
+=
+
+Please check [Manual.md](https://github.com/schneebergerlab/GameteBinning/blob/master/Manual.md)
+
