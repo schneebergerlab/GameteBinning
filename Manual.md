@@ -122,13 +122,13 @@ Convert the variant format to plain text
 
     SHOREmap convert --marker gamete_ManualCurated.vcf --folder shoremap_converted --indel-size 5 --min-AF 0.1 -runid 20200426
     
-Filtering for allelic snps. This needs to tune quality and coverage according to the avaiable data. For allele coverage, we are looking for allelic snps, so it should be around 0.5; while the coverage on the alt allele should be around half the genome wide average. In the meanwhile, the total coverage should not be too small or too large. In my case, the avg is around 171x (and half:84x), and we can try the cutoffs below:
+Filtering for allelic snps. This needs to tune quality and coverage according to the specific data. For allele frequency, as we are looking for allelic snps, it should be around 0.5; while the coverage on the alt allele should be around half the genome wide average. In the meanwhile, the total coverage should not be too small or too large. In my case, the avg is around 171x (and half:84x), and we can try the cutoffs below:
 
 Note, $6 is mapping quality; $7 is coverage of alt allele, we can try with
 
     awk '$6>=100 && $7>=60 && $7<=140 && $7/$8>=120 && $7/$8<=280 && $8>=0.38 && $8<=0.62' /path/to/20200426_converted_variant.txt > final_snp_markers.txt
 
-##### Step 6. Read alignment of individual gamete nuclei
+##### Step 6. 10x Genomics barcode correction
 
 We use a pseudo-reference at chr-level here, and we can use the one from almond: 
 
@@ -176,20 +176,22 @@ Get list of good barcodes,
     cd /path/to/sample_A_asCellseparator
     awk '$2>=5000' asCellseparator_intermediate_raw_barcode_stat.txt > A_barcode_over_5000rpairs.list
 
+##### step 7. Read alignment of individual gamete nuclei
+
 Align reads of each nuclei to the curated assembly
 
-##### Step 7. Variant calling (individual gamete nuclei)
+##### Step 8. Variant calling (individual gamete nuclei)
 
-##### Step 8. Extract allele count (individual gamete nuclei) at SNP markers
+##### Step 9. Extract allele count (individual gamete nuclei) at SNP markers
 
-##### Step 9. Phasing SNPs within gamete genomes.
+##### Step 10. Phasing SNPs within gamete genomes.
 
-##### Step 10. Contig grouping and genetic mapping using JoinMap4.0
+##### Step 11. Contig grouping and genetic mapping using JoinMap4.0
 
-##### Step 11. Deletion marker definition
+##### Step 12. Deletion marker definition
 
-##### Step 12. Genetic map completing
+##### Step 13. Genetic map completing
 
-##### Step 13. Long read separation
+##### Step 14. Long read separation
 
-##### Step 14. Independent haplotype assemblies within each linkage group
+##### Step 15. Independent haplotype assemblies within each linkage group
