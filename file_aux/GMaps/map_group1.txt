@@ -1,0 +1,67 @@
+# Markers mapped. Filtering of NA: 0.1 markers, 0.1 individuals.
+#; Fri, 8 Nov 2019, 18:30:45
+#; nloc=45 (+19 unmapped)
+tig00003690_ri       unmapped     70
+tig00003692_le       unmapped     71
+tig00003816_le       unmapped    113
+tig00003816_ri       unmapped    114
+tig00003958_le       unmapped    177
+tig00003958_ri       unmapped    178
+tig00003962_le       unmapped    179
+tig00004021_le       unmapped    207
+tig00004021_ri       unmapped    208
+tig00004043_ri       unmapped    218
+tig00004145_le       unmapped    249
+tig00004145_ri       unmapped    250
+tig00004149_ri       unmapped    252
+tig00004222_le       unmapped    265
+tig00004314_le       unmapped    297
+tig00004314_ri       unmapped    298
+tig00004379_ri       unmapped    320
+tig00004527_le       unmapped    359
+tig00004527_ri       unmapped    360
+tig00003853_ri          0.000  ;  132
+tig00003853_le          0.868  ;  131
+tig00003851_ri          1.201  ;  130
+tig00003851_le          2.027  ;  129
+tig00003692_ri          4.557  ;   72
+tig00003690_le         12.873  ;   69
+tig00004416_le         13.792  ;  333
+tig00004416_ri         15.881  ;  334
+tig00004418_le         16.911  ;  335
+tig00004418_ri         17.390  ;  336
+tig00004410_le         18.840  ;  327
+tig00004410_ri         20.093  ;  328
+tig00004412_le         20.707  ;  329
+tig00004412_ri         24.959  ;  330
+tig00004414_le         26.553  ;  331
+tig00004414_ri         29.874  ;  332
+tig00004522_le         31.078  ;  357
+tig00004522_ri         35.747  ;  358
+tig00002271_le         36.623  ;   49
+tig00002271_ri         37.762  ;   50
+tig00000215_ri         38.053  ;    6
+tig00000215_le         41.844  ;    5
+tig00001854_le         42.180  ;   47
+tig00001854_ri         42.474  ;   48
+tig00004149_le         48.169  ;  251
+tig00004222_ri         48.267  ;  266
+tig00003962_ri         49.100  ;  180
+tig00004152_le         49.209  ;  253
+tig00003768_ri         49.241  ;   98
+tig00003768_le         49.241  ;   97
+tig00004152_ri         49.395  ;  254
+tig00001729_ri         49.423  ;   46
+tig00001729_le         49.517  ;   45
+tig00001387_le         49.567  ;   27
+tig00001387_ri         49.870  ;   28
+tig00004043_le         54.527  ;  217
+tig00004379_le         64.463  ;  319
+tig00004377_ri         66.158  ;  318
+tig00004377_le         71.270  ;  317
+tig00003842_le         72.612  ;  125
+tig00003842_ri         75.515  ;  126
+tig00003844_le         78.266  ;  127
+tig00003844_ri         80.089  ;  128
+tig00004107_ri         81.792  ;  238
+tig00004107_le         86.442  ;  237

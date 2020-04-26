@@ -1,0 +1,8 @@
+/path/to/GameteBinning/file_aux/LGs/1.txt
+/path/to/GameteBinning/file_aux/LGs/2.txt
+/path/to/GameteBinning/file_aux/LGs/3.txt
+/path/to/GameteBinning/file_aux/LGs/4.txt
+/path/to/GameteBinning/file_aux/LGs/5.txt
+/path/to/GameteBinning/file_aux/LGs/6.txt
+/path/to/GameteBinning/file_aux/LGs/7.txt
+/path/to/GameteBinning/file_aux/LGs/8.txt

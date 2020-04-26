@@ -94,7 +94,7 @@ Re-check haplotigs (blast them with the curated genome, i.e., the one built up w
     makeblastdb -in ${db} -dbtype nucl > formatdb.log
     contigpath=/path/to/tmp_purge_haplotigs/CONTIGS/
     grep '>' curated.haplotigs.fasta | sed 's/ /\t/g' | cut -f1 | sed 's/>//' > haplotigs_as_predicted_by_purgeHaplotig.list
-    while read r; do q=${r}.fasta; blastn -query ${contigpath}/${q} -db ${db} -out ${q}.oblast -outfmt 7 > blastall_blastn.log;done < ../haplotigs_as_predicted_by_purgeHaplotig.list
+    while read ctg; do q=${ctg}.fasta; blastn -query ${contigpath}/${q} -db ${db} -out ${q}.oblast -outfmt 7 > blastall_blastn.log;done < ../haplotigs_as_predicted_by_purgeHaplotig.list
 
 This leads to a version of manually curated assembly
 
@@ -237,21 +237,165 @@ Prepare a meta-file of subset_consen_cells.txt, where each line points to a cons
 
 ##### Step 10. haploidy level evaluation
 
-Find potential transitions between two genotypes,
+Find potential transitions between two genotypes with one of the outputs from asCellseparator,
 
     contigPM=/path/to/pattern_nuclei_full_markerSet_list.txt
     ./noise_checker ${contigPM} > checkling_full_markerSert.log
     sort -k1,1n haplotype_swaps_observed_in_cells.txt > haplotype_swaps_observed_in_cells_sorted.txt
     rm haplotype_swaps_observed_in_cells.txt
 
-The script "/path/to/R_scripts_aux/visualize_noise_stat_haploidy_evalu.R" can be used to visualize the haploidy evaluation after setting up variable paths.
+The script "/path/to/R_scripts_aux/visualize_noise_stat_haploidy_evalu.R" can be used to visualize the haploidy evaluation after setting up variable paths. The nuclei with <=5% genotype transitions are considered as haploid cells. With this, suppose we have a filtered barcode list
+
+    final_barcode_over_5000rpairs.list
+
+And correspondingly, we have an updated list of haploid nuclei to analyze,
+
+    subset445_consen_cells.txt
 
 ##### Step 11. Contig grouping and genetic mapping using JoinMap4.0
 
-##### Step 12. Deletion marker definition
+This is done with JoinMap, leading to 
+
+    genetic_map_limited_markers.txt --genetic map with 216 ordered markers, see here /path/to/GameteBinning/file_aux/GMaps/genetic_map_limited_markers.txt
+    zphase_contigs_linksage.txt     --linkage groups with 653 non-ordered markers, see here /path/to/GameteBinning/file_aux/LGs/zphase_contigs_linksage.txt
+
+Of course, for different species, this would be different.
+
+##### Step 12. Deletion marker definition (= select large regions without SNP markers)
+
+    marker=/path/to/final_snp_markers.txt
+    sizes=/path/to/manually_curated.chrsizes
+    mkdir define_del_like_regions
+    cd define_del_like_regions
+    del_marker_finder --marker ${marker} --min-del-size 2000 --chrsizes ${sizes} -o del_like > define_del_isize2000.log
+    mv del_like_isize2000_final_snp_markers.txt del_like_isize2000_final_snp_markers.bed
+
+##### Step 13. Genotype deletion markers with read counts. Note, -a of samtools depth must be on, to use coordiate as key to match regions by del_depth_finder
+
+Get depth for regions in bed,
+
+    bam=/path/to/gamete_ManualCurated.bam
+    samtools depth -a -b /path/to/del_like_isize2000_final_snp_markers.bed ${bam} > del_like_isize2000_final_snp_markers.bed.depth.illumina
+
+Define hap- and hom-regions, according to (where 120x hap-hom cutoff needs to be selected based on data)
+
+    region=/path/to/del_like_isize2000_final_snp_markers.bed
+    depth=/path/to/del_like_isize2000_final_snp_markers.bed.depth.illumina
+    del_depth_finder --region ${region} --depth ${depth} --hap-hom-cutoff 120 -o del_like_isize2000_final_snp_markers > del_depth_finder_illumina.log
+
+This leads to
+
+    del_like_isize2000_final_snp_markers_del_like_interval_avg_depth_sorted.bed
+
+For each nuclei, count reads in the above hap- and hom- regions (if barcodes have been filtered during some of the above steps, pls replace it with the update one),
+
+    bam=/path/to/gamete_ManualCurated.bam
+    bed=/path/to/del_like_isize2000_final_snp_markers.bed
+    while read bc; do 
+        cd /path/to/cells_sep/${bc}
+        bedtools coverage -counts -a ${bed} -b part1_${bc}.bam -bed > ${bc}_del_like_read_count.bed
+    done < /path/to/final_barcode_over_5000rpairs.list
+
+Note, the read counts will be normalized (to RPKM) later.
 
 ##### Step 13. Genetic map completing
 
-##### Step 14. Long read separation
+    date=2020426
+    depth=/path/to/del_like_isize2000_final_snp_markers_del_like_interval_avg_depth_sorted.bed
+    cells=/path/to/subset445_consen_cells.txt
+    del_marker_genotyper --pollen ${cells} --leaf-depth ${leaf_depth} --sample 8 --barcode 9 -o ${date} > ${date}_del_marker_genotyper.log
 
-##### Step 15. Independent haplotype assemblies within each linkage group
+This leads to 
+
+    ./${date}_tmp_pollen_del_like_genotypes_addi/s2_genotype_contig_seq_del_like.txt
+
+Complete the genetic map using del-like markers
+
+    map=/path/to/genetic_map_limited_markers.txt     --genetic map with 216 ordered markers    are generated by JoinMap, see here /path/to/GameteBinning/file_aux/GMaps/genetic_map_limited_markers.txt
+    LG=/path/to/zphase_contigs_linksage.txt          --linkage groups with 653 non-ordered markers are generated by JoinMap, see here /path/to/GameteBinning/file_aux/LGs/zphase_contigs_linksage.txt
+    PM=/path/to/s2_genotype_contig_seq.txt           --PM patterns are generated    by asPollinator_v6
+    DEL=/path/to/s2_genotype_contig_seq_del_like.txt --del markers are generated    by del_marker_genotyper
+    asCaffolder_v2 --map ${map} --phase ${LG} --marker ${PM} --marker-del-like ${DEL} -o phased > del_phased.log
+
+This leads to,
+
+    phased_s2_genotype_contig_seq_del_like.txt
+    z_genetic_maps_updated_with_PMsimilarity_of_snp_plus_del_like_contigs/upd_map_group[1-8].txt
+
+This folder includes more complete genetic maps by inserting del-like markers which will be used to anchor contigs of final assembly into chr-level. 
+
+Find out contigs upd_map_group[1-8].txt with left/right marker NOT next to each other; put them together at one position with minimum genetic distance to nearby markers:
+
+    cat upd_map_group1.txt | cut -f1 | uniq -c | awk '$1==1' 
+
+Those showing 1 need moving. 
+
+This finally leads to, 
+
+    final_manual_upd_map_group[1-8].txt.
+
+##### Long read separation
+
+Align PacBio reads to the manully curated assembly 
+
+    refgenome=/path/to/manually_curated.fasta
+    minimap2 -ax map-pb -t 4 ${refgenome} /path/to/long_reads_raw.fa > pacbio_manual_purged_ref.sam
+
+Separate longs with phased snps and dels in each linkage group,
+
+    snps=/path/to/s4_phased_markers.txt ------------------------ phased snps by asPollinator_v6
+    dels=/path/to/phased_s2_genotype_contig_seq_del_like.txt --- phased dels by asCaffolder_v2
+    LG=/path/to/zphase_contigs_linksage.txt -------------------- grouping/phasing by JoinMap, see here /path/to/GameteBinning/file_aux/LGs/zphase_contigs_linksage.txt
+    sam=pacbio_manual_purged_ref.sam
+    pacbio_genotyper --sam ${sam} --marker ${snps} --marker2 ${dels} --phase ${LG} --ims 0.9 -o pb_separation_with_dels > pb_intermediate_for_checkings.txt
+
+In the end of pb_intermediate_for_checkings.txt (caution this is a large file), there would be a report on how the reads were seprated according to different cases (apricot-case as below),
+
+    Warning: there are a1=390453 alignments, totaling v1=0.80742 Gb  without explicit CIAGR info -- collected in unmapped file.
+    Warning: there are a2=949982 alignments being secondary/supplementary alignment, skipped. 
+    Warning: there are a3=1189596 alignments without seq field - secondary/supplementary alignment or not passing filters, skipped.
+    Info: in total a4=2196665 reads from all=4726696 aligment lines collected (<-header line not counted). 
+    Info: number of pb alignment seqs WITHOUT linkage info: 57955, totaling v2=0.493197 Gb
+          (u0=57955 unique reads in this cluster of no lg or not grouped. )
+    Info: number of pb alignment seqs WITH    linkage info a5=2138710, totaling v3=18.6285 Gb
+          (u1=2138710 unique reads in this cluster of lg_mkr+lg_nomkr: it is a sum of reads covering or not covering phased markers); among v3 (with a5), 
+          a6=801036 covered no phased markers thus cannot determine P/M cluster - alignment seq has been put in both P and M cluster, 
+          taking a portion of v4=6.24754 Gb (u2=801036 unique reads in this cluster of lg_nomkr)
+
+    Note: u1 included all u2. 
+    Note: v1+v2+v3    = total raw pacbio data of (full: 19.929) Gb. 
+    Note: a1+a4       = total raw pacbio read number (full: 2,587,118)
+    Note: a1+a2+a3+a4 = all raw alignment num; 
+          a4 only gives unique readname numbers; 1 readname may have >=2 alignments.)
+    Note: u0+u1       = a4. 
+
+And, information on distribution of pacbio reads in linkage groups: 
+
+    1.txt_MMM_pbreads.fa    150560  150560
+    1.txt_PPP_pbreads.fa    158813  158813
+    2.txt_MMM_pbreads.fa    84496   84496
+    2.txt_PPP_pbreads.fa    86248   86248
+    3.txt_MMM_pbreads.fa    125911  125911
+    3.txt_PPP_pbreads.fa    122432  122432
+    4.txt_MMM_pbreads.fa    105348  105348
+    4.txt_PPP_pbreads.fa    114706  114706
+    5.txt_MMM_pbreads.fa    99987   99987
+    5.txt_PPP_pbreads.fa    102427  102427
+    6.txt_MMM_pbreads.fa    132686  132686
+    6.txt_PPP_pbreads.fa    138104  138104
+    7.txt_MMM_pbreads.fa    140458  140458
+    7.txt_PPP_pbreads.fa    148249  148249
+    8.txt_MMM_pbreads.fa    204317  204317
+    8.txt_PPP_pbreads.fa    223968  223968
+
+##### Independent haplotype assemblies within each linkage group
+
+Here we assembled each haplotye for each linkage group, using flye 
+
+    for i in {1..8}; do 
+       for sample in ${chr}.txt_PPP_pbreads.fa ${chr}.txt_MMM_pbreads.fa; do
+	   flye --pacbio-raw /path/to/${sample} --genome-size 40m --out-dir flye_${sample} --threads 4
+       done
+    done
+
+

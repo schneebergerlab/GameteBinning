@@ -1,0 +1,8 @@
+path/to//GameteBinning/file_aux/GMaps//map_group1.txt
+path/to//GameteBinning/file_aux/GMaps//map_group2.txt
+path/to//GameteBinning/file_aux/GMaps//map_group3.txt
+path/to//GameteBinning/file_aux/GMaps//map_group4.txt
+path/to//GameteBinning/file_aux/GMaps//map_group5.txt
+path/to//GameteBinning/file_aux/GMaps//map_group6.txt
+path/to//GameteBinning/file_aux/GMaps//map_group7.txt
+path/to//GameteBinning/file_aux/GMaps//map_group8.txt
