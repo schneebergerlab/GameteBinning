@@ -99,6 +99,7 @@ Re-check haplotigs (blast them with the curated genome, i.e., the one built up w
 This leads to a version of manually curated assembly
 
 * manually_curated.fasta
+* manually_curated.chrsizes (this is contig size file of the assembly with format: contig_id	contig_size, tab-separated)
 
 Note, although this is supposed to be a haploid assembly, it is built up with a high mixture of both haplotypes.
 
@@ -201,7 +202,7 @@ Prepare ploidy file,
 
     echo "*	*	*	*	1" > ploidy1
 
-Align individual nuclei to manually curated genome (see Step 5.),
+Align individual nuclei to manually curated genome (see Step 4.),
 
     refgenome=manually_curated.fasta
     while read bc; do 
@@ -214,21 +215,43 @@ Align individual nuclei to manually curated genome (see Step 5.),
     	rm bt2_${bc}_PE_mpileup.gz; 
     done < barcode_over_5000rpairs.list
 
+Note, at this step, there is possiblity to figure which nuclei could be related to contamination according to alignment rate.
 
+##### Step 8. Extract allele count (individual gamete nuclei) at SNP markers (from Step 5.)
 
-
-
-
-##### Step 8. Extract allele count (individual gamete nuclei) at SNP markers
+    while read bc; do
+    	cd /path/to/cells_sep/${bc}
+    	SHOREmap extract --marker /path/to/final_snp_markers.txt --chrsizes /path/to/manually_curated.chrsizes --folder . --consen 20200426_converted_consen.txt
+    done < barcode_over_5000rpairs.list
 
 ##### Step 9. Phasing SNPs within gamete genomes.
 
-##### Step 10. Contig grouping and genetic mapping using JoinMap4.0
+Prepare subset_consen_cells.txt, where each line is a file path pointing to /path/to/cells_sep/barcodeX/shoremap_converted/extracted_consensus_0.txt
 
-##### Step 11. Deletion marker definition
+    date=20200426
+    marker=/path/to/final_snp_markers.txt
+    cells=/path/to/subset662_consen_cells.txt
+    sizes=/path/to/manually_curated.chrsizes
+    asPollinator_v6.1 --marker ${marker} --pollen ${cells} -o z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81 --corr --ims 0.81 --size ${sizes} > z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81.log
+    ls z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81_tmp_pollen_genotypes/s1_genotype_pollen_seq_ctgwise/s1_genotype_pollen_seq*.txt > pattern_nuclei_full_markerSet_list.txt
 
-##### Step 12. Genetic map completing
+##### Step 10. haploidy level evaluation
 
-##### Step 13. Long read separation
+Find potential transitions between two genotypes,
+
+    contigPM=/path/to/pattern_nuclei_full_markerSet_list.txt
+    ./noise_checker ${contigPM} > checkling_full_markerSert.log
+    sort -k1,1n haplotype_swaps_observed_in_cells.txt > haplotype_swaps_observed_in_cells_sorted.txt
+    rm haplotype_swaps_observed_in_cells.txt
+
+The script "/path/to/R_scripts_aux/visualize_noise_stat_haploidy_evalu.R" can be used to visualize the haploidy evaluation after setting up variable paths.
+
+##### Step 11. Contig grouping and genetic mapping using JoinMap4.0
+
+##### Step 12. Deletion marker definition
+
+##### Step 13. Genetic map completing
+
+##### Step 14. Long read separation
 
 ##### Step 15. Independent haplotype assemblies within each linkage group
