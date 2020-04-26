@@ -143,7 +143,7 @@ Correspondingly, we prepare "a JSON file - /file_aux/contig_defs.json - describi
 
 This will create a new reference folder of "/refdata-almond_genome/".
 
-Correct 10x Genomics barcodes (note, if there are multiple libraries, this step needs to be done library by library, as same barcodes might be shared across libraries. However, different runs of the same library can be run together by setting option --sample=lib1,lib2\[,...\]),
+Correct 10x Genomics barcodes (note, if there are multiple libraries, this step needs to be done library by library, as same barcodes might be shared across libraries. However, different runs of the same library can be run together by setting option --sample=libx-run-1,libx-run-2\[,...\]),
 
     cellranger-dna cnv --id=4279_A_run615_cellranger --reference=/path/to/refdata-almond_genome/ --fastq=/path/to/gamete_raw_reads/ --sample=4279_A_run615_SI-GA-D4 --localcores=20 --localmem=30
 
