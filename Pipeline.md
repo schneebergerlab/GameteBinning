@@ -1,4 +1,4 @@
-Manual
+Pipeline
 =
 This is the pipeline explaining how gamete binning works.
 
