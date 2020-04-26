@@ -19,4 +19,7 @@ Note 2: except the self-developed tools (for installation, please check INSTALL)
 * [purge_haplotigs](https://github.com/skingan/purge_haplotigs_multiBAM)
 * [jellyfish 2.2.10](https://github.com/gmarcais/Jellyfish)
 * [findGSE](https://github.com/schneebergerlab/findGSE)
+* [pbalign](https://github.com/PacificBiosciences/pbalign)
+* [pilon](https://github.com/broadinstitute/pilon)
+* [blast](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
 * ...

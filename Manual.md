@@ -45,10 +45,51 @@ or,
 
 This leads to preliminary assembly
 
-* preasm.fasta
+* pre_asm.fasta
+
+Polish the preliminary assembly using PacBio reads (using arrow/pilon), leading to the polished assembly
+
+* pre_asm_pilon.fasta
+
+Index it with bowtie2 for later read alignment (4 threads used)
+
+    bowtie2-build -f pre_asm_pilon.fasta pre_asm_pilon.fasta --threads 4
+
 
 ##### Step 4. Curation of assembly (with purge_haplotigs pipeline)
 
+Align Illumina reads to the reference
+
+    bowtie2 -x pre_asm_pilon.fasta -1 gamete_libx_R1_clean.fastq.gz -2 gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o RP_PE_sorted.bam -
+
+Generate a coverage histogram
+
+    purge_haplotigs readhist -b RP_PE_sorted.bam -g pre_asm_pilon.fasta -t 4
+
+Select coverage cutoffs (./tmp_purge_haplotigs/MISC/aligned_pe.bam.histogram.csv) - here we have het-peak at 84x, hom-peak at 171x:
+
+    lowcutoff=40   -- this is the value at the valley on the left of het-peak
+    midcutoff=121  -- this is the value at the valley between het- and hom-peaks
+    highcutoff=342 -- this is ~2*hom-peak
+
+
+Analyse the coverage on a contig by contig basis. This script produces a contig coverage stats csv file with suspect contigs flagged for further analysis or removal.
+
+purge_haplotigs contigcov -i RP_PE_sorted.bam.gencov -l ${lowcutoff} -m ${midcutoff} -h ${highcutoff} -o coverage_stats.csv -j 95 -s 80
+
+Run a BEDTools windowed coverage analysis (if generating dotplots), and 
+
+    ABAM=RP_PE_sorted.bam
+    genome=pre_asm_pilon.fasta
+    purge_haplotigs purge -g ${genome} -c coverage_stats.csv -t 16 -o curated -d -b ${ABAM} -wind_min 1000 -wind_nmax 250 -v
+
+Re-check haplotigs, 
+
+    db=curated.fasta
+    makeblastdb -in ${db} -dbtype nucl > formatdb.log
+    contigpath=/path/to/tmp_purge_haplotigs/CONTIGS/
+    grep '>' curated.haplotigs.fasta | sed 's/ /\t/g' | cut -f1 | sed 's/>//' > haplotigs_as_predicted_by_purgeHaplotig.list
+    while read r; do q=${r}.fasta; blastn -query ${contigpath}/${q} -db ${db} -out ${q}.oblast -outfmt 7 > blastall_blastn.log;done < ../haplotigs_as_predicted_by_purgeHaplotig.list
 
 
 This leads to curated assembly
