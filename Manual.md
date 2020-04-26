@@ -226,7 +226,7 @@ Note, at this step, there is possiblity to figure which nuclei could be related 
 
 ##### Step 9. Phasing SNPs within gamete genomes.
 
-Prepare subset_consen_cells.txt, where each line is a file path pointing to /path/to/cells_sep/barcodeX/shoremap_converted/extracted_consensus_0.txt
+Prepare subset_consen_cells.txt, where each line is a file path pointing to a consensus file of a specific barcode: /path/to/cells_sep/barcodeX/shoremap_converted/extracted_consensus_0.txt
 
     date=20200426
     marker=/path/to/final_snp_markers.txt
