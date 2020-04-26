@@ -405,5 +405,5 @@ Here we assembled each haplotye for each linkage group, using flye
        done
     done
 
-This leads to final assemblies which can be further polished with respective Pacbio reads.
+This leads to 16 haplotype-specific assemblies, each representing for one haploid genome in each of the eight linkage groups, which can be further polished with its respective Pacbio reads.
 
