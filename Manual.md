@@ -2,9 +2,9 @@ Manual
 =
 This is the pipeline explaining how gamete binning works.
 
-##### Prepare reads
+##### Prepare data
 
-Reads should include long reads (e.g., PacBio/Nanopore) from somatic tissue and short reads from
+All data are from a single heterozygous individual of interest, including long reads (e.g., PacBio/Nanopore) from somatic tissue and short reads from
 single cell sequencing of hundreds of gamete genomes, supposing the following are ready:
 
 * long_reads_raw.fa
@@ -75,15 +75,15 @@ Select coverage cutoffs (./tmp_purge_haplotigs/MISC/aligned_pe.bam.histogram.csv
 
 Analyse the coverage on a contig by contig basis. This script produces a contig coverage stats csv file with suspect contigs flagged for further analysis or removal.
 
-purge_haplotigs contigcov -i RP_PE_sorted.bam.gencov -l ${lowcutoff} -m ${midcutoff} -h ${highcutoff} -o coverage_stats.csv -j 95 -s 80
+    purge_haplotigs contigcov -i RP_PE_sorted.bam.gencov -l ${lowcutoff} -m ${midcutoff} -h ${highcutoff} -o coverage_stats.csv -j 95 -s 80
 
-Run a BEDTools windowed coverage analysis (if generating dotplots), and 
+Run a BEDTools windowed coverage analysis
 
     ABAM=RP_PE_sorted.bam
     genome=pre_asm_pilon.fasta
     purge_haplotigs purge -g ${genome} -c coverage_stats.csv -t 16 -o curated -d -b ${ABAM} -wind_min 1000 -wind_nmax 250 -v
 
-Re-check haplotigs, 
+Re-check haplotigs (blast them with the curated genome, i.e., consisting of selected primary contigs), 
 
     db=curated.fasta
     makeblastdb -in ${db} -dbtype nucl > formatdb.log
