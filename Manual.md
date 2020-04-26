@@ -405,4 +405,5 @@ Here we assembled each haplotye for each linkage group, using flye
        done
     done
 
+This leads to final assemblies which can be further polished with respective Pacbio reads.
 
