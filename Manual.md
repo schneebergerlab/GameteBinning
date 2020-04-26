@@ -186,22 +186,49 @@ Get list of good barcodes,
     cd /path/to/cells_sep
     awk '$2>=5000' asCellseparator_intermediate_raw_barcode_stat.txt > barcode_over_5000rpairs.list
 
-##### step 7. Read alignment of individual gamete nuclei
+Merge parts of read extraction
 
-Align reads of each nuclei to the curated assembly
+    while read bc; do 
+    	cd /path/to/cells_sep/${bc}
+    	cat *R1* > ${bc}_R1.fastq.gz
+    	cat *R2* > ${bc}_R2.fastq.gz
+    	cd ..
+    done < barcode_over_5000rpairs.list
 
-##### Step 8. Variant calling (individual gamete nuclei)
+##### step 7. Read alignment and variant calling for each gamete nuclei
 
-##### Step 9. Extract allele count (individual gamete nuclei) at SNP markers
+Prepare ploidy file,
 
-##### Step 10. Phasing SNPs within gamete genomes.
+    echo "*	*	*	*	1" > ploidy1
 
-##### Step 11. Contig grouping and genetic mapping using JoinMap4.0
+Align individual nuclei to manually curated genome (see Step 5.),
 
-##### Step 12. Deletion marker definition
+    refgenome=manually_curated.fasta
+    while read bc; do 
+    	cd /path/to/cells_sep/${bc}
+    	bowtie2 -p 1 -x ${refgenome} -1 ${bc}_R1.fastq.gz -2 ${bc}_R2.fastq.gz 2> bowtie2.err | samtools view -@ 1 -bS - | samtools sort -@ 1 -o part1_${bc}.bam -
+    	bcftools mpileup -Oz -o bt2_${bc}_PE_mpileup.gz -f ${refgenome} part1_${bc}.bam
+    	bcftools call -A -m -Ov --ploidy-file /path/to/ploidy1 bt2_${bc}_PE_mpileup.gz > bt2_${bc}_PE.vcf
+    	SHOREmap convert --marker bt2_${bc}_PE.vcf --folder shoremap_converted -runid 20200426 -no-r >convert.log
+    	bcftools view -Ob bt2_${bc}_PE.vcf -o bt2_${bc}_PE.bcf
+    	rm bt2_${bc}_PE_mpileup.gz; 
+    done < barcode_over_5000rpairs.list
 
-##### Step 13. Genetic map completing
 
-##### Step 14. Long read separation
+
+
+
+
+##### Step 8. Extract allele count (individual gamete nuclei) at SNP markers
+
+##### Step 9. Phasing SNPs within gamete genomes.
+
+##### Step 10. Contig grouping and genetic mapping using JoinMap4.0
+
+##### Step 11. Deletion marker definition
+
+##### Step 12. Genetic map completing
+
+##### Step 13. Long read separation
 
 ##### Step 15. Independent haplotype assemblies within each linkage group
