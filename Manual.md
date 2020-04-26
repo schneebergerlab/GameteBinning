@@ -130,20 +130,20 @@ Note, $6 is mapping quality; $7 is coverage of alt allele, we can try with
 
 ##### Step 6. 10x Genomics barcode correction
 
-We use a pseudo-reference at chr-level here, and we can use the one from almond: 
+We use an artifical reference from almond at chr-level (in other cases, one can select a closely-related species with chr-level assembly): 
 
     wget http://getentry.ddbj.nig.ac.jp/getentry?database=na&accession_number=AP019297-AP019304&filetype=gz&limit=1000&format=fasta
     gunzip fasta_na.AP019297-AP019304.txt.gz
     sed 's/AP019297|AP019297\.1/chr1/g' fasta_na.AP019297-AP019304.txt| sed 's/AP019298|AP019298\.1/chr2/g' | sed 's/AP019299|AP019299\.1/chr3/g' | sed 's/AP019300|AP019300\.1/chr4/g' | sed 's/AP019301|AP019301\.1/chr5/g' | sed 's/AP019302|AP019302\.1/chr6/g' | sed 's/AP019303|AP019303\.1/chrX/g' | sed 's/AP019304|AP019304\.1/chrY/g' | sed 's/\./ /g' | sed 's/,//g'  | sed 's/ Prunus dulcis DNA pseudomolecule /_/g' > almond_genome.fa
 
-Correspondingly, we prepare "a JSON file - /file_aux/contig_defs.json - describing primary contigs", and then index the genome,
+Correspondingly, we prepare "a JSON file - /file_aux/contig_defs.json - describing primary contigs", and then index the genome with cellranger-dna,
 
     refgenome=almond_genome.fa
     cellranger-dna mkref ${refgenome} /path/to/file_aux/contig_defs.json
 
 This will create a new reference folder of "/refdata-almond_genome/".
 
-Correct 10x Genomics barcodes (note, if there are multiple libraries, this step needs to be done library by library, as same barcodes might be shared across libraries),
+Correct 10x Genomics barcodes (note, if there are multiple libraries, this step needs to be done library by library, as same barcodes might be shared across libraries. However, different runs of the same library can be run together by setting option --sample=lib1,lib2\[,...\]),
 
     cellranger-dna cnv --id=4279_A_run615_cellranger --reference=/path/to/refdata-almond_genome/ --fastq=/path/to/gamete_raw_reads/ --sample=4279_A_run615_SI-GA-D4 --localcores=20 --localmem=30
 
