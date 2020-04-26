@@ -84,7 +84,7 @@ Run a BEDTools windowed coverage analysis (note, this would lead to curated.fast
     genome=pre_asm_pilon.fasta
     purge_haplotigs purge -g ${genome} -c coverage_stats.csv -t 16 -o curated -d -b ${ABAM} -wind_min 1000 -wind_nmax 250 -v
 
-Re-check haplotigs (blast them with the curated genome, i.e., the one built up with selected primary contigs), 
+Re-check haplotigs (blast them with the curated genome, i.e., the one built up with selected primary contigs). If a defined haplotig is not covered by more than 50% (by primary contigs), correct it as a primary contig, and merge it with curated.fasta. (Note, visualization of the blast result with R_scripts_aux/visualize_blast_haplotig_against_purged.R -- necessary settings on paths needed). 
 
     db=curated.fasta
     makeblastdb -in ${db} -dbtype nucl > formatdb.log
@@ -92,7 +92,7 @@ Re-check haplotigs (blast them with the curated genome, i.e., the one built up w
     grep '>' curated.haplotigs.fasta | sed 's/ /\t/g' | cut -f1 | sed 's/>//' > haplotigs_as_predicted_by_purgeHaplotig.list
     while read r; do q=${r}.fasta; blastn -query ${contigpath}/${q} -db ${db} -out ${q}.oblast -outfmt 7 > blastall_blastn.log;done < ../haplotigs_as_predicted_by_purgeHaplotig.list
 
-Check the coverage of each query haplotig, if it is not covered by more than 50%, re-define it as the primary contig, and merge it with curated.fasta (one can check with visualization of the blast result with R_scripts_aux/visualize_blast_haplotig_against_purged.R -- necessary settings on paths needed). This leads to a version of manually curated assembly
+This leads to a version of manually curated assembly
 
 * manually_curated.fasta
 
