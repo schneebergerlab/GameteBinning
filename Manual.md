@@ -55,10 +55,12 @@ Index it with bowtie2 for later read alignment (4 threads used)
 
     bowtie2-build -f pre_asm_pilon.fasta pre_asm_pilon.fasta --threads 4
 
+Note, reference contig id might include "|", which is not accepted by many existing tools. Replace it with sed 's/|arrow|/_/g'.
+
 
 ##### Step 4. Curation of assembly (with purge_haplotigs pipeline)
 
-Align Illumina reads to the reference
+Align Illumina reads to the preliminary assembly
 
     bowtie2 -x pre_asm_pilon.fasta -1 gamete_libx_R1_clean.fastq.gz -2 gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o RP_PE_sorted.bam -
 
@@ -72,18 +74,17 @@ Select coverage cutoffs (./tmp_purge_haplotigs/MISC/aligned_pe.bam.histogram.csv
     midcutoff=121  -- this is the value at the valley between het- and hom-peaks
     highcutoff=342 -- this is ~2*hom-peak
 
-
 Analyse the coverage on a contig by contig basis. This script produces a contig coverage stats csv file with suspect contigs flagged for further analysis or removal.
 
     purge_haplotigs contigcov -i RP_PE_sorted.bam.gencov -l ${lowcutoff} -m ${midcutoff} -h ${highcutoff} -o coverage_stats.csv -j 95 -s 80
 
-Run a BEDTools windowed coverage analysis
+Run a BEDTools windowed coverage analysis (note, this would lead to curated.fasta and curated.haplotigs.fasta)
 
     ABAM=RP_PE_sorted.bam
     genome=pre_asm_pilon.fasta
     purge_haplotigs purge -g ${genome} -c coverage_stats.csv -t 16 -o curated -d -b ${ABAM} -wind_min 1000 -wind_nmax 250 -v
 
-Re-check haplotigs (blast them with the curated genome, i.e., consisting of selected primary contigs), 
+Re-check haplotigs (blast them with the curated genome, i.e., the one built up with selected primary contigs), 
 
     db=curated.fasta
     makeblastdb -in ${db} -dbtype nucl > formatdb.log
@@ -91,13 +92,37 @@ Re-check haplotigs (blast them with the curated genome, i.e., consisting of sele
     grep '>' curated.haplotigs.fasta | sed 's/ /\t/g' | cut -f1 | sed 's/>//' > haplotigs_as_predicted_by_purgeHaplotig.list
     while read r; do q=${r}.fasta; blastn -query ${contigpath}/${q} -db ${db} -out ${q}.oblast -outfmt 7 > blastall_blastn.log;done < ../haplotigs_as_predicted_by_purgeHaplotig.list
 
+Check the coverage of each query haplotig, if it is not covered by more than 50%, re-define it as the primary contig, and merge it with curated.fasta (one can check with visualization of the blast result with R_scripts_aux/visualize_blast_haplotig_against_purged.R -- necessary settings on paths needed). This leads to a version of manually curated assembly
 
-This leads to curated assembly
+* manually_curated.fasta
 
-* curated_asm.fasta
-
+Note, although this is supposed to be a haploid assembly, it is built up with a high mixture of both haplotypes.
 
 ##### Step 5. Read alignment of pooled gamete nuclei for SNP marker definition
+
+Index the reference sequence,
+
+    refgenome=manually_curated.fasta
+    bowtie2-build -f ${refgenome} ${refgenome} --threads 4
+
+Align pooled gamete reads to the reference
+
+    bowtie2 -x ${refgenome} -1 gamete_libx_R1_clean.fastq.gz -2 gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o gamete_ManualCurated.bam -; samtools depth gamete_ManualCurated.bam > gamete_ManualCurated.depth.txt; samtools index gamete_ManualCurated.bam
+
+Get vcf and variants (a file of ploidy need, columns are '\t'-separated)
+
+    echo "*	*	*	*	2" > ploidy
+    bcftools mpileup -d 800 -f ${refgenome} gamete_ManualCurated.bam |bcftools call -m -v -Ov --ploidy-file ${ploidy} > gamete_ManualCurated.vcf
+
+Convert the variant format to plain text
+
+    SHOREmap convert --marker gamete_ManualCurated.vcf --folder shoremap_converted --indel-size 5 --min-AF 0.1 -runid 20200426
+    
+Filtering for allelic snps. This needs to tune quality and coverage according to the avaiable data. For allele coverage, we are looking for allelic snps, so it should be around 0.5; while the coverage on the alt allele should be around half the genome wide average. In the meanwhile, the total coverage should not be too small or too large. In my case, the avg is around 171x (and half:84x), and we can try the cutoffs below:
+
+Note, $6 is mapping quality; $7 is coverage of alt allele, we can try with
+
+    awk '$6>=100 && $7>=60 && $7<=140 && $7/$8>=120 && $7/$8<=280 && $8>=0.38 && $8<=0.62' /path/to/20200426_converted_variant.txt > final_snp_markers.txt
 
 ##### Step 6. Read alignment of individual gamete nuclei
 
