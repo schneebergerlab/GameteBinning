@@ -33,5 +33,5 @@ Please check [INSTALL](https://github.com/schneebergerlab/GameteBinning/blob/mas
 Pipeline of assembly
 =
 
-Please check [Manual.md](https://github.com/schneebergerlab/GameteBinning/blob/master/Manual.md)
+Please check [Pipeline.md](https://github.com/schneebergerlab/GameteBinning/blob/master/Pipeline.md)
 
