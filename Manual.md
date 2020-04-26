@@ -5,11 +5,15 @@ This is the pipeline explaining how gamete binning works.
 ##### Prepare data
 
 All data are from a single heterozygous individual of interest, including long reads (e.g., PacBio/Nanopore) from somatic tissue and short reads from
-single cell sequencing of hundreds of gamete genomes. Suppose the following are ready:
+single cell sequencing of hundreds of gamete genomes. Suppose the following are ready (example below):
 
 * long_reads_raw.fa
-* gamete_libx_R1.fastq.gz, gamete_libx_R2.fastq.gz
+* 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz,4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz
 
+Make softlinks (for convenience. However, 10x Genomics tools need the full name, so we keep both namings),
+
+    ln -s 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz gamete_libx_R1.fastq.gz
+    ln -s 4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz gamete_libx_R2.fastq.gz
 
 ##### Step 1. Trim reads
 
@@ -126,7 +130,51 @@ Note, $6 is mapping quality; $7 is coverage of alt allele, we can try with
 
 ##### Step 6. Read alignment of individual gamete nuclei
 
+We use a pseudo-reference at chr-level here, and we can use the one from almond: 
+
+    wget http://getentry.ddbj.nig.ac.jp/getentry?database=na&accession_number=AP019297-AP019304&filetype=gz&limit=1000&format=fasta
+    gunzip fasta_na.AP019297-AP019304.txt.gz
+    sed 's/AP019297|AP019297\.1/chr1/g' fasta_na.AP019297-AP019304.txt| sed 's/AP019298|AP019298\.1/chr2/g' | sed 's/AP019299|AP019299\.1/chr3/g' | sed 's/AP019300|AP019300\.1/chr4/g' | sed 's/AP019301|AP019301\.1/chr5/g' | sed 's/AP019302|AP019302\.1/chr6/g' | sed 's/AP019303|AP019303\.1/chrX/g' | sed 's/AP019304|AP019304\.1/chrY/g' | sed 's/\./ /g' | sed 's/,//g'  | sed 's/ Prunus dulcis DNA pseudomolecule /_/g' > almond_genome.fa
+
+Correspondingly, we prepare "a JSON file - /file_aux/contig_defs.json - describing primary contigs", and then index the genome,
+
+    refgenome=almond_genome.fa
+    cellranger-dna mkref ${refgenome} /path/to/file_aux/contig_defs.json
+
+This will create a new reference folder of "/refdata-almond_genome/".
+
+Correct 10x Genomics barcodes (note, if there are multiple libraries, this step needs to be done library by library, as same barcodes might be shared across libraries),
+
+    cellranger-dna cnv --id=4279_A_run615_cellranger --reference=/path/to/refdata-almond_genome/ --fastq=/path/to/gamete_raw_reads/ --sample=4279_A_run615_SI-GA-D4 --localcores=20 --localmem=30
+
+Sort the bam (from the above, which is with corrected barcode information) with read name
+
+    bam=/path/to/4279_A_run615_cellranger/outs/possorted_bam.bam
+    samtools sort -n ${bam} -o RNsorted_bam.bam
+
+Create reads ligated with corrected barcode,
+
+    bam=/path/to/4279_A_run615_cellranger/outs/RNsorted_bam.bam
+    samtools view ${bam} | T10xbam2fq - 4279_A
+
+This leads to 
+
+    4279_A_fqfrom10xBam_bxCorrected_R1.fq.gz
+    4279_A_fqfrom10xBam_bxCorrected_R2.fq.gz
+
 Extract individual nuclei
+
+    R1=4279_A_fqfrom10xBam_bxCorrected_R1.fq.gz
+    R2=4279_A_fqfrom10xBam_bxCorrected_R2.fq.gz
+    barcode_len=16
+    minimumRP=5000
+    min_readpair=10000000
+    asCellseparator ${barcode_len} ${R1} ${R2} ${minimumRP} ${min_readpair} cells_sep
+
+Get list of good barcodes,
+
+    cd /path/to/sample_A_asCellseparator
+    awk '$2>=5000' asCellseparator_intermediate_raw_barcode_stat.txt > A_barcode_over_5000rpairs.list
 
 Align reads of each nuclei to the curated assembly
 

@@ -1,0 +1,17 @@
+{
+        "species_prefixes": [""],
+        "primary_contigs": [
+        "chr1", "chr2", "chr3","chr4", "chr5", "chr6", "chrX", "chrY"
+        ],
+        "sex_chromosomes": {
+                "_male": {
+                        "chrX": 1,
+                        "chrY": 1
+                 },
+                 "_female": {
+                        "chrX": 2,
+                        "chrY": 0
+                 }
+        },
+        "non_nuclear_contigs": ["chrM"]
+}
