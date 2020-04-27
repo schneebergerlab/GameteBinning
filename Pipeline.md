@@ -5,12 +5,12 @@ This is the pipeline explaining how gamete binning works.
 ##### Step 0. Prepare data
 
 All data are from a single heterozygous individual of interest, including long reads (e.g., PacBio/Nanopore) from somatic tissue and short reads from
-single cell sequencing of hundreds of gamete genomes. Suppose the following are ready (example below):
+single-cell sequencing of hundreds of gamete genomes. Suppose the following are ready (example below):
 
-* long_reads_raw.fa
-* 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz,4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz
+* PacBio/Nanopore: long_reads_raw.fa
+* 10x Genomics+Illumina: 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz, 4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz
 
-Make softlinks (for convenience. However, 10x Genomics tools need the full name, so we keep both namings),
+For convenience, make some softlinks (Note, 10x Genomics tools need the full name, so we use both namings),
 
     ln -s 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz gamete_libx_R1.fastq.gz
     ln -s 4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz gamete_libx_R2.fastq.gz
@@ -234,7 +234,7 @@ Prepare a meta-file of subset_consen_cells.txt, where each line points to a cons
     sizes=/path/to/manually_curated.chrsizes
     asPollinator_1.0 --marker ${marker} --pollen ${cells} -o z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81 --corr --ims 0.81 --size ${sizes} > z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81.log
 
-Collect the PM pattern of each nuclei at each contig for next step of haploid evaluation, 
+Collect the PM pattern of each nuclei at each contig for next step of haploid evaluation,
 
     ls z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81_tmp_pollen_genotypes/s1_genotype_pollen_seq_ctgwise/s1_genotype_pollen_seq*.txt > pattern_nuclei_full_markerSet_list.txt
 
