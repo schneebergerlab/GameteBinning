@@ -17,7 +17,7 @@ For convenience, make some softlinks (Note, 10x Genomics tools need the full nam
 
 ##### Step 1. Trim reads
 
-Trim 16 bp barcodes off R1's (10x Genomics library setting, including hexamer so 22 bp trimmed off)
+Trim 16 bp barcodes off R1's (10x Genomics library setting, including hexamer so 22 bp trimmed off),
 
     T10X_barcode_trimmer gamete_libx_R1.fastq.gz gamete_libx_R2.fastq.gz
 
@@ -25,19 +25,20 @@ This leads to
 
 * gamete_libx_R1_clean.fastq.gz, gamete_libx_R2_clean.fastq.gz
 
-
 ##### Step 2. Genome size estimation with cleaned reads
 
-Count k-mers
+Count k-mers (k=21),
 
     zcat gamete_libx_R1_clean.fastq.gz gamete_libx_R2_clean.fastq.gz | jellyfish count /dev/fd/0  -C -o gamete_21mer_trimmed -m 21 -t 20 -s 5G
     jellyfish histo -h 200000 -o gamete_21mer_trimmed.histo gamete_21mer_trimmed
 
-Estimate genome size ~ 242.5 Mb
+Estimate genome size,
 
     R
     library("findGSE")
     findGSE(histo="gamete_21mer_trimmed.histo", sizek=21, outdir=".", exp_hom=200)
+
+In apricot, we got ~ 242.5 Mb.
 
 ##### Step 3. Preliminary assembly
 
