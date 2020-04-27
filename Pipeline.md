@@ -5,9 +5,9 @@ This is the pipeline explaining how gamete binning works.
 ##### Step 0. Prepare data
 
 All data are from a single heterozygous individual of interest, including long reads (e.g., PacBio/Nanopore) from somatic tissue and short reads from
-single-cell sequencing of hundreds of gamete genomes. Suppose the following are ready (example below):
+single-cell sequencing of hundreds of gamete genomes. In this example, we use the following:
 
-* PacBio/Nanopore: long_reads_raw.fa
+* PacBio: long_reads_raw.fa
 * 10x Genomics+Illumina: 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz, 4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz
 
 For convenience, make some softlinks (Note, 10x Genomics tools need the full name, so we use both namings),
