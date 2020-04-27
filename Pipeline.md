@@ -17,7 +17,7 @@ For convenience, make some softlinks (Note, 10x Genomics tools need the full nam
 
 ##### Step 1. Trim reads
 
-Trim 16 bp barcodes off R1's (10x Genomics library setting)
+Trim 16 bp barcodes off R1's (10x Genomics library setting, including hexamer so 22 bp trimmed off)
 
     T10X_barcode_trimmer gamete_libx_R1.fastq.gz gamete_libx_R2.fastq.gz
 
