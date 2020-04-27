@@ -88,7 +88,7 @@ Run a BEDTools windowed coverage analysis (note, this would lead to curated.fast
     genome=pre_asm_pilon.fasta
     purge_haplotigs purge -g ${genome} -c coverage_stats.csv -t 16 -o curated -d -b ${ABAM} -wind_min 1000 -wind_nmax 250 -v
 
-Re-check haplotigs (blast them with the curated genome, i.e., the one built up with selected primary contigs). If a defined haplotig is not covered by more than 50% (by primary contigs), correct it as a primary contig, and merge it with curated.fasta. (Note, visualization of the blast result with R_scripts_aux/visualize_blast_haplotig_against_purged.R -- necessary settings on paths needed). 
+Re-check haplotigs (blast them with the curated genome, i.e., the one built up with selected primary contigs). If a defined haplotig is not covered by more than 50% (by primary contigs), correct it as a primary contig, and merge it with curated.fasta. (Note, visualization of the blast result with R_scripts_aux/visualize_blast_haplotig_against_purged.R -- necessary settings on paths needed).
 
     db=curated.fasta
     makeblastdb -in ${db} -dbtype nucl > formatdb.log
@@ -122,7 +122,7 @@ Get vcf and variants (a file of ploidy need, columns are '\t'-separated)
 Convert the variant format to plain text
 
     SHOREmap convert --marker gamete_ManualCurated.vcf --folder shoremap_converted --indel-size 5 --min-AF 0.1 -runid 20200426
-    
+
 Filtering for allelic snps. This needs to tune quality and coverage according to the specific data. For allele frequency, as we are looking for allelic snps, it should be around 0.5; while the coverage on the alt allele should be around half the genome wide average. In the meanwhile, the total coverage should not be too small or too large. In my case, the avg is around 171x (and half:84x), and we can try the cutoffs below:
 
 Note, $6 is mapping quality; $7 is coverage of alt allele, we can try with
@@ -131,7 +131,7 @@ Note, $6 is mapping quality; $7 is coverage of alt allele, we can try with
 
 ##### Step 6. 10x Genomics barcode correction
 
-We use an artifical reference from almond at chr-level (in other cases, one can select a closely-related species with chr-level assembly): 
+We use an artifical reference from almond at chr-level (in other cases, one can select a closely-related species with chr-level assembly):
 
     wget http://getentry.ddbj.nig.ac.jp/getentry?database=na&accession_number=AP019297-AP019304&filetype=gz&limit=1000&format=fasta
     gunzip fasta_na.AP019297-AP019304.txt.gz
@@ -158,7 +158,7 @@ Create reads ligated with corrected barcode,
     bam=/path/to/4279_A_run615_cellranger/outs/RNsorted_bam.bam
     samtools view ${bam} | T10xbam2fq - 4279_A
 
-This leads to 
+This leads to
 
     4279_A_fqfrom10xBam_bxCorrected_R1.fq.gz
     4279_A_fqfrom10xBam_bxCorrected_R2.fq.gz
@@ -177,7 +177,7 @@ This would report something like below,
     Info: R1 file: 4279_A_fqfrom10xBam_bxCorrected_R1.fq.gz
     Info: total number of barcodes observed in file1: 8656307
     Info: total number of reads    observed in file1: 124447727
-    	among the above, good with read pairs >= 5000: 
+    	among the above, good with read pairs >= 5000:
     	number of barcodes observed in file1: 401
     	number of reads	   observed in file1: 103317664
     Info: number of effective barcodes: 401
@@ -189,7 +189,7 @@ Get list of good barcodes,
 
 Merge parts of read extraction
 
-    while read bc; do 
+    while read bc; do
     	cd /path/to/cells_sep/${bc}
     	cat *R1* > ${bc}_R1.fastq.gz
     	cat *R2* > ${bc}_R2.fastq.gz
@@ -205,14 +205,14 @@ Prepare ploidy file,
 Align individual nuclei to manually curated genome (see Step 4.),
 
     refgenome=manually_curated.fasta
-    while read bc; do 
+    while read bc; do
     	cd /path/to/cells_sep/${bc}
     	bowtie2 -p 1 -x ${refgenome} -1 ${bc}_R1.fastq.gz -2 ${bc}_R2.fastq.gz 2> bowtie2.err | samtools view -@ 1 -bS - | samtools sort -@ 1 -o part1_${bc}.bam -
     	bcftools mpileup -Oz -o bt2_${bc}_PE_mpileup.gz -f ${refgenome} part1_${bc}.bam
     	bcftools call -A -m -Ov --ploidy-file /path/to/ploidy1 bt2_${bc}_PE_mpileup.gz > bt2_${bc}_PE.vcf
     	SHOREmap convert --marker bt2_${bc}_PE.vcf --folder shoremap_converted -runid 20200426 -no-r >convert.log
     	bcftools view -Ob bt2_${bc}_PE.vcf -o bt2_${bc}_PE.bcf
-    	rm bt2_${bc}_PE_mpileup.gz; 
+    	rm bt2_${bc}_PE_mpileup.gz;
     done < barcode_over_5000rpairs.list
 
 Note, at this step, there is possiblity to figure out which nuclei could be related to contamination according to alignment rate.
@@ -232,7 +232,7 @@ Prepare a meta-file of subset_consen_cells.txt, where each line points to a cons
     marker=/path/to/final_snp_markers.txt
     cells=/path/to/subset662_consen_cells.txt
     sizes=/path/to/manually_curated.chrsizes
-    asPollinator_v6.1 --marker ${marker} --pollen ${cells} -o z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81 --corr --ims 0.81 --size ${sizes} > z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81.log
+    asPollinator_1.0 --marker ${marker} --pollen ${cells} -o z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81 --corr --ims 0.81 --size ${sizes} > z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81.log
 
 Collect the PM pattern of each nuclei at each contig for next step of haploid evaluation, 
 
@@ -257,7 +257,7 @@ Correspondingly, we have an updated list of consensus info of haploid nuclei to 
 
 ##### Step 11. Contig grouping and genetic mapping using JoinMap4.0
 
-This is done with JoinMap (interactive work with the software in windows), leading to 
+This is done with JoinMap (interactive work with the software in windows), leading to
 
     genetic_map_limited_markers.txt --genetic map with 216 ordered markers, see here /path/to/GameteBinning/file_aux/GMaps/genetic_map_limited_markers.txt
     zphase_contigs_linksage.txt     --linkage groups with 653 non-ordered markers, see here /path/to/GameteBinning/file_aux/LGs/zphase_contigs_linksage.txt
@@ -294,7 +294,7 @@ For each nuclei, count reads in the above hap- and hom- regions (if barcodes hav
 
     bam=/path/to/gamete_ManualCurated.bam
     bed=/path/to/del_like_isize2000_final_snp_markers.bed
-    while read bc; do 
+    while read bc; do
         cd /path/to/cells_sep/${bc}
         bedtools coverage -counts -a ${bed} -b part1_${bc}.bam -bed > ${bc}_del_like_read_count.bed
     done < /path/to/final_barcode_over_5000rpairs.list
@@ -308,7 +308,7 @@ Note, the read counts will be normalized (to RPKM) during del-marker phasing and
     cells=/path/to/subset445_consen_cells.txt
     del_marker_genotyper --pollen ${cells} --leaf-depth ${leaf_depth} --sample 8 --barcode 9 -o ${date} > ${date}_del_marker_genotyper.log
 
-This leads to 
+This leads to
 
     ./${date}_tmp_pollen_del_like_genotypes_addi/s2_genotype_contig_seq_del_like.txt
 
@@ -325,21 +325,21 @@ This leads to,
     phased_s2_genotype_contig_seq_del_like.txt
     z_genetic_maps_updated_with_PMsimilarity_of_snp_plus_del_like_contigs/upd_map_group[1-8].txt
 
-This folder includes more complete genetic maps by inserting del-like markers which will be used to anchor contigs of final assembly into chr-level. 
+This folder includes more complete genetic maps by inserting del-like markers which will be used to anchor contigs of final assembly into chr-level.
 
 Find out contigs upd_map_group[1-8].txt with left/right marker NOT next to each other; put them together at one position with minimum genetic distance to nearby markers:
 
-    cat upd_map_group1.txt | cut -f1 | uniq -c | awk '$1==1' 
+    cat upd_map_group1.txt | cut -f1 | uniq -c | awk '$1==1'
 
 Those showing 1 need moving.
 
-This finally leads to, 
+This finally leads to,
 
     final_manual_upd_map_group[1-8].txt --see example result here: GameteBinning/file_aux/final_GMaps/
 
 ##### Step 15. Long read separation
 
-Align PacBio reads to the manully curated assembly 
+Align PacBio reads to the manully curated assembly
 
     refgenome=/path/to/manually_curated.fasta
     minimap2 -ax map-pb -t 4 ${refgenome} /path/to/long_reads_raw.fa > pacbio_manual_purged_ref.sam
@@ -359,24 +359,24 @@ In the end of pb_intermediate_for_checkings.txt (caution this is a large file), 
 We would see something like below:
 
     Warning: there are a1=390453 alignments, totaling v1=0.80742 Gb  without explicit CIAGR info -- collected in unmapped file.
-    Warning: there are a2=949982 alignments being secondary/supplementary alignment, skipped. 
+    Warning: there are a2=949982 alignments being secondary/supplementary alignment, skipped.
     Warning: there are a3=1189596 alignments without seq field - secondary/supplementary alignment or not passing filters, skipped.
-    Info: in total a4=2196665 reads from all=4726696 aligment lines collected (<-header line not counted). 
+    Info: in total a4=2196665 reads from all=4726696 aligment lines collected (<-header line not counted).
     Info: number of pb alignment seqs WITHOUT linkage info: 57955, totaling v2=0.493197 Gb
           (u0=57955 unique reads in this cluster of no lg or not grouped. )
     Info: number of pb alignment seqs WITH    linkage info a5=2138710, totaling v3=18.6285 Gb
-          (u1=2138710 unique reads in this cluster of lg_mkr+lg_nomkr: it is a sum of reads covering or not covering phased markers); among v3 (with a5), 
-          a6=801036 covered no phased markers thus cannot determine P/M cluster - alignment seq has been put in both P and M cluster, 
+          (u1=2138710 unique reads in this cluster of lg_mkr+lg_nomkr: it is a sum of reads covering or not covering phased markers); among v3 (with a5),
+          a6=801036 covered no phased markers thus cannot determine P/M cluster - alignment seq has been put in both P and M cluster,
           taking a portion of v4=6.24754 Gb (u2=801036 unique reads in this cluster of lg_nomkr)
 
-    Note: u1 included all u2. 
-    Note: v1+v2+v3    = total raw pacbio data of (full: 19.929) Gb. 
+    Note: u1 included all u2.
+    Note: v1+v2+v3    = total raw pacbio data of (full: 19.929) Gb.
     Note: a1+a4       = total raw pacbio read number (full: 2,587,118)
-    Note: a1+a2+a3+a4 = all raw alignment num; 
+    Note: a1+a2+a3+a4 = all raw alignment num;
           a4 only gives unique readname numbers; 1 readname may have >=2 alignments.)
-    Note: u0+u1       = a4. 
+    Note: u0+u1       = a4.
 
-And, information on distribution of pacbio reads in linkage groups: 
+And, information on distribution of pacbio reads in linkage groups:
 
     1.txt_MMM_pbreads.fa    150560
     1.txt_PPP_pbreads.fa    158813
@@ -397,13 +397,12 @@ And, information on distribution of pacbio reads in linkage groups:
 
 ##### Step 16. Independent haplotype assemblies within each linkage group
 
-Here we assembled each haplotye for each linkage group, using flye 
+Here we assembled each haplotye for each linkage group, using flye
 
-    for i in {1..8}; do 
+    for i in {1..8}; do
        for sample in ${chr}.txt_PPP_pbreads.fa ${chr}.txt_MMM_pbreads.fa; do
            flye --pacbio-raw /path/to/${sample} --genome-size 40m --out-dir flye_${sample} --threads 4
        done
     done
 
 This leads to 16 haplotype-specific assemblies, each representing for one haploid genome in each of the eight linkage groups, which can be further polished with its respective Pacbio reads.
-
