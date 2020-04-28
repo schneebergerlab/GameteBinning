@@ -82,7 +82,7 @@ Align Illumina reads to the preliminary assembly
     wd=/path/to/curated_asm/
     cd ${wd}
 
-    bowtie2 -x pre_asm_pilon.fasta -1 /path/to/reads/gamete_libx_R1_clean.fastq.gz -2 /path/to/reads/gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o RP_PE_sorted.bam -
+    bowtie2 -x /path/to/pre_assembly/pre_asm_pilon.fasta -1 /path/to/reads/gamete_libx_R1_clean.fastq.gz -2 /path/to/reads/gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o RP_PE_sorted.bam -
 
 Generate a coverage histogram
 
