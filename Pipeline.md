@@ -232,13 +232,13 @@ Align individual nuclei to manually curated genome (see Step 4.),
 
     refgenome=/path/to/curated_asm/manually_curated.fasta
     while read bc; do
-    	cd /path/to/individual_nuclei_extraction/cells_sep/${bc}
-    	bowtie2 -p 1 -x ${refgenome} -1 ${bc}_R1.fastq.gz -2 ${bc}_R2.fastq.gz 2> bowtie2.err | samtools view -@ 1 -bS - | samtools sort -@ 1 -o part1_${bc}.bam -
-    	bcftools mpileup -Oz -o bt2_${bc}_PE_mpileup.gz -f ${refgenome} part1_${bc}.bam
-    	bcftools call -A -m -Ov --ploidy-file /path/to/ploidy1 bt2_${bc}_PE_mpileup.gz > bt2_${bc}_PE.vcf
-    	SHOREmap convert --marker bt2_${bc}_PE.vcf --folder shoremap_converted -runid 20200426 -no-r >convert.log
-    	bcftools view -Ob bt2_${bc}_PE.vcf -o bt2_${bc}_PE.bcf
-    	rm bt2_${bc}_PE_mpileup.gz;
+        cd /path/to/individual_nuclei_extraction/cells_sep/${bc}
+        bowtie2 -p 1 -x ${refgenome} -1 ${bc}_R1.fastq.gz -2 ${bc}_R2.fastq.gz 2> bowtie2.err | samtools view -@ 1 -bS - | samtools sort -@ 1 -o part1_${bc}.bam -
+        bcftools mpileup -Oz -o bt2_${bc}_PE_mpileup.gz -f ${refgenome} part1_${bc}.bam
+        bcftools call -A -m -Ov --ploidy-file /path/to/ploidy1 bt2_${bc}_PE_mpileup.gz > bt2_${bc}_PE.vcf
+        SHOREmap convert --marker bt2_${bc}_PE.vcf --folder shoremap_converted -runid 20200426 -no-r >convert.log
+        bcftools view -Ob bt2_${bc}_PE.vcf -o bt2_${bc}_PE.bcf
+        rm bt2_${bc}_PE_mpileup.gz;
     done < barcode_over_5000rpairs.list
 
 Note, at this step, there is possiblity to figure out which nuclei could be related to contamination according to alignment rate.
@@ -255,6 +255,9 @@ Note, at this step, there is possiblity to figure out which nuclei could be rela
 
 ##### Step 9. Phasing SNPs within gamete genomes.
 
+    wd=/path/to/snp_phasing/
+    cd ${wd}
+
 Prepare a meta-file of subset_consen_cells.txt, where each line points to a consensus file of a specific barcode: /path/to/cells_sep/barcodeX/shoremap_converted/extracted_consensus_0.txt
 
     date=20200426
@@ -268,6 +271,9 @@ Collect the PM pattern of each nuclei at each contig for next step of haploid ev
     ls z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81_tmp_pollen_genotypes/s1_genotype_pollen_seq_ctgwise/s1_genotype_pollen_seq*.txt > pattern_nuclei_full_markerSet_list.txt
 
 ##### Step 10. haploidy level evaluation
+
+    wd=/path/to/haploid_eval/
+    cd ${wd}
 
 Find potential transitions between two genotypes with the PM pattern of each nuclei at each contig from asPollinator_1.0,
 
@@ -286,6 +292,9 @@ Correspondingly, we have an updated list of consensus info of haploid nuclei to 
 
 ##### Step 11. Contig grouping and genetic mapping using JoinMap4.0
 
+    wd=/path/to/ctg_grouping_genetic_mapping/
+    cd ${wd}
+
 This is done with JoinMap (interactive work with the software in windows), leading to
 
     genetic_map_limited_markers.txt --genetic map with 216 ordered markers, see here /path/to/GameteBinning/file_aux/GMaps/genetic_map_limited_markers.txt
@@ -295,6 +304,9 @@ Of course, for different species, this would be different.
 
 ##### Step 12. Deletion marker definition (= select large regions without SNP markers)
 
+    wd=/path/to/del_marker_definition/
+    cd ${wd}
+
     marker=/path/to/final_snp_markers.txt
     sizes=/path/to/manually_curated.chrsizes
     mkdir define_del_like_regions
@@ -303,6 +315,9 @@ Of course, for different species, this would be different.
     mv del_like_isize2000_final_snp_markers.txt del_like_isize2000_final_snp_markers.bed
 
 ##### Step 13. Genotype deletion markers with read counts. Note, -a of samtools depth must be on, to use coordiate as key to match regions by del_depth_finder
+
+    wd=/path/to/del_marker_definition/
+    cd ${wd}
 
 Get depth for regions in bed,
 
@@ -331,6 +346,9 @@ For each nuclei, count reads in the above hap- and hom- regions (if barcodes hav
 Note, the read counts will be normalized (to RPKM) during del-marker phasing and positioning in genetic map.
 
 ##### Step 14. Genetic map completing
+
+    wd=/path/to/genetic_map_completing/
+    cd ${wd}
 
     date=2020426
     depth=/path/to/del_like_isize2000_final_snp_markers_del_like_interval_avg_depth_sorted.bed
@@ -367,6 +385,9 @@ This finally leads to,
     final_manual_upd_map_group[1-8].txt --see example result here: GameteBinning/file_aux/final_GMaps/
 
 ##### Step 15. Long read separation
+
+    wd=/path/to/long_read_separation/
+    cd ${wd}
 
 Align PacBio reads to the manully curated assembly
 
@@ -426,6 +447,9 @@ And, information on distribution of pacbio reads in linkage groups:
 
 ##### Step 16. Independent haplotype assemblies within each linkage group
 
+    wd=/path/to/indep_haplotype_assembly/
+    cd ${wd}
+
 Here we assembled each haplotye for each linkage group, using flye
 
     for i in {1..8}; do
@@ -437,6 +461,9 @@ Here we assembled each haplotye for each linkage group, using flye
 This leads to 16 haplotype-specific assemblies, each representing for one haploid genome in each of the eight linkage groups.
 
 ##### Step 17. Scaffolding haplotype-specific assemblies to chromosome-level
+
+    wd=/path/to/indep_chr_scaffolding/
+    cd ${wd}
 
 Create a pseudo-reference chromosome for each linkage group with manually curated assembly (from Step 4) and the final complete genetic map (from Step 14: asCaffolder_v2),
 
