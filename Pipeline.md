@@ -410,7 +410,7 @@ This leads to 16 haplotype-specific assemblies, each representing for one haploi
 
 ##### Step 17. Scaffolding haplotype-specific assemblies to chromosome-level
 
-Create a pseudo-reference genome from manually curated assembly (from Step 4) and genetic map (from Step 14: asCaffolder_v2),
+Create a pseudo-reference chromosome for each linkage group with manually curated assembly (from Step 4) and the final complete genetic map (from Step 14: asCaffolder_v2),
 
     fa=/path/to/manually_curated.fasta
     updatedgm=/path/to/updated_genetic_map_folder/
@@ -419,7 +419,11 @@ Create a pseudo-reference genome from manually curated assembly (from Step 4) an
         scaffolder ${updatedgm}/final_manual_upd_map_group${i}.txt ${fa} >> scaffolder.log
     done
 
-Scaffod the contigs into chromosome-level assemblies for each haplotype-assembly in each linkage group,
+This leads to,
+
+    scaffolded_final_manual_upd_map_group[1-8].fa
+
+Scaffod the contigs into chromosome-level assemblies for each haplotype-assembly of each linkage group,
 
     scaf_dir=/path/to/do/scaffolding/
     cd ${scaf}
@@ -427,7 +431,7 @@ Scaffod the contigs into chromosome-level assemblies for each haplotype-assembly
     for i in {1..8}; do ln -s /path/to/flye_${i}.txt_MMM_pbreads.fa/assembly.fasta ln_asm${i}.txt_MMM_pbreads.fa.contigs.fasta; done
     for i in {1..8}; do ln -s /path/to/flye_${i}.txt_PPP_pbreads.fa/assembly.fasta ln_asm${i}.txt_PPP_pbreads.fa.contigs.fasta; done
     # CAUTION: genetic-map scaffolds - path setting below required by ragoo
-    ## query=pacbio assembly for linkage group 1.txt to ref=genetic scaffolds 2
+    # query=pacbio assembly for linkage group 1.txt to ref=genetic scaffolds 2
     refmapfa=../scaffolded_final_manual_upd_map_group2.fa
     querylab=asm1
     for PM in PPP MMM; do  
@@ -438,28 +442,27 @@ Scaffod the contigs into chromosome-level assemblies for each haplotype-assembly
         cd ..
     done
 
-    ## query=pacbio assembly for linkage group 2.txt to ref=genetic scaffolds 7
+    # query=pacbio assembly for linkage group 2.txt to ref=genetic scaffolds 7
     refmapfa=../scaffolded_final_manual_upd_map_group7.fa
     querylab=asm2
-    ## query=pacbio assembly for linkage group 3.txt to ref=genetic scaffolds 3
+    # query=pacbio assembly for linkage group 3.txt to ref=genetic scaffolds 3
     refmapfa=../scaffolded_final_manual_upd_map_group3.fa
     querylab=asm3
-    ## query=pacbio assembly for linkage group 4.txt to ref=genetic scaffolds 4
+    # query=pacbio assembly for linkage group 4.txt to ref=genetic scaffolds 4
     refmapfa=../scaffolded_final_manual_upd_map_group4.fa
     querylab=asm4
-    ## query=pacbio assembly for linkage group 5.txt to ref=genetic scaffolds 6
+    # query=pacbio assembly for linkage group 5.txt to ref=genetic scaffolds 6
     refmapfa=../scaffolded_final_manual_upd_map_group6.fa
     querylab=asm5
-    ## query=pacbio assembly for linkage group 6.txt to ref=genetic scaffolds 1
+    # query=pacbio assembly for linkage group 6.txt to ref=genetic scaffolds 1
     refmapfa=../scaffolded_final_manual_upd_map_group1.fa
     querylab=asm6
-    ## query=pacbio assembly for linkage group 7.txt to ref=genetic scaffolds 5
+    # query=pacbio assembly for linkage group 7.txt to ref=genetic scaffolds 5
     refmapfa=../scaffolded_final_manual_upd_map_group5.fa
     querylab=asm7
-    ## query=pacbio assembly for linkage group 8.txt to ref=genetic scaffolds 8
+    # query=pacbio assembly for linkage group 8.txt to ref=genetic scaffolds 8
     refmapfa=../scaffolded_final_manual_upd_map_group8.fa
     querylab=asm8
-#
 
 
 
