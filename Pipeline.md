@@ -525,7 +525,7 @@ Scaffod the contigs into chromosome-level assemblies for each haplotype-assembly
         cd ..
     done
 
-This leads to final chromosome-level and haplotype-specific assemblies
+This leads to final chromosome-level and haplotype-specific assemblies (regarding eight linkage groups)
 
     /path/to/do/scaffolding/asm[1-8]_scaffolding_[MMM/PPP]/ragoo_output/ragoo.fasta
 
