@@ -86,7 +86,7 @@ Align Illumina reads to the preliminary assembly
 
 Generate a coverage histogram
 
-    purge_haplotigs readhist -b RP_PE_sorted.bam -g pre_asm_pilon.fasta -t 4
+    purge_haplotigs readhist -b RP_PE_sorted.bam -g /path/to/pre_assembly/pre_asm_pilon.fasta -t 4
 
 Select coverage cutoffs (./tmp_purge_haplotigs/MISC/aligned_pe.bam.histogram.csv) - here we have het-peak at 84x, hom-peak at 171x:
 
@@ -101,7 +101,7 @@ Analyse the coverage on a contig by contig basis. This script produces a contig 
 Run a BEDTools windowed coverage analysis (note, this would lead to curated.fasta and curated.haplotigs.fasta)
 
     ABAM=RP_PE_sorted.bam
-    genome=pre_asm_pilon.fasta
+    genome=/path/to/pre_assembly/pre_asm_pilon.fasta
     purge_haplotigs purge -g ${genome} -c coverage_stats.csv -t 16 -o curated -d -b ${ABAM} -wind_min 1000 -wind_nmax 250 -v
 
 Re-check haplotigs (blast them with the curated genome, i.e., the one built up with selected primary contigs). If a defined haplotig is not covered by more than 50% (by primary contigs), correct it as a primary contig, and merge it with curated.fasta. (Note, visualization of the blast result with R_scripts_aux/visualize_blast_haplotig_against_purged.R -- necessary settings on paths needed).
