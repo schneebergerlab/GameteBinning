@@ -10,8 +10,11 @@ single-cell sequencing of hundreds of gamete genomes. In this example, we use th
 * PacBio: long_reads_raw.fa
 * 10x Genomics+Illumina: 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz, 4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz
 
-For convenience, make some softlinks (Note, 10x Genomics tools need the full name, so we use both namings),
+Suppose all these raw data are collected the path below, and for convenience, make some softlinks (Note, 10x Genomics tools need the full name, so we use both namings),
 
+    wd=/path/to/reads/
+    cd ${wd}
+    
     ln -s 4279_A_run615_SI-GA-D4_S3_L003_R1_001.fastq.gz gamete_libx_R1.fastq.gz
     ln -s 4279_A_run615_SI-GA-D4_S3_L003_R2_001.fastq.gz gamete_libx_R2.fastq.gz
 
@@ -19,6 +22,9 @@ For convenience, make some softlinks (Note, 10x Genomics tools need the full nam
 
 Trim 16 bp barcodes off R1's (10x Genomics library setting, including hexamer so 22 bp trimmed off),
 
+    wd=/path/to/reads/
+    cd ${wd}
+    
     T10X_barcode_trimmer gamete_libx_R1.fastq.gz gamete_libx_R2.fastq.gz
 
 This leads to
@@ -29,7 +35,9 @@ This leads to
 
 Count k-mers (k=21),
 
-    zcat gamete_libx_R1_clean.fastq.gz gamete_libx_R2_clean.fastq.gz | jellyfish count /dev/fd/0  -C -o gamete_21mer_trimmed -m 21 -t 20 -s 5G
+    wd=/path/to/kmer_analysis/
+    cd ${wd}
+    zcat /path/to/reads/gamete_libx_R1_clean.fastq.gz /path/to/reads/gamete_libx_R2_clean.fastq.gz | jellyfish count /dev/fd/0  -C -o gamete_21mer_trimmed -m 21 -t 20 -s 5G
     jellyfish histo -h 200000 -o gamete_21mer_trimmed.histo gamete_21mer_trimmed
 
 Estimate genome size,
@@ -42,6 +50,9 @@ In apricot, we got ~ 242.5 Mb.
 
 ##### Step 3. Preliminary assembly
 
+    wd=/path/to/pre_assembly/
+    cd ${wd}
+    
     canu -p preasm -d canu_preasm useGrid=false genomeSize=242500000 corMhapSensitivity=high corMinCoverage=0 corOutCoverage=100 correctedErrorRate=0.105 -pacbio-raw long_reads_raw.fa executiveThreads=20 >canu_preasm.log
 
 or,
@@ -67,7 +78,11 @@ Note, reference contig id might include "|", which is not accepted by many exist
 
 Align Illumina reads to the preliminary assembly
 
-    bowtie2 -x pre_asm_pilon.fasta -1 gamete_libx_R1_clean.fastq.gz -2 gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o RP_PE_sorted.bam -
+
+    wd=/path/to/curated_asm/
+    cd ${wd}
+
+    bowtie2 -x pre_asm_pilon.fasta -1 /path/to/reads/gamete_libx_R1_clean.fastq.gz -2 /path/to/reads/gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o RP_PE_sorted.bam -
 
 Generate a coverage histogram
 
@@ -104,16 +119,20 @@ This leads to a version of manually curated assembly
 
 Note, although this is supposed to be a haploid assembly, it is built up with a high mixture of both haplotypes.
 
-##### Step 5. Read alignment of pooled gamete nuclei for SNP marker definition
-
-Index the reference sequence,
+Index the sequence as reference for later steps,
 
     refgenome=manually_curated.fasta
     bowtie2-build -f ${refgenome} ${refgenome} --threads 4
 
+##### Step 5. Read alignment of pooled gamete nuclei for SNP marker definition
+
+    wd=/path/to/marker_creation/
+    cd ${wd}
+
 Align pooled gamete reads to the reference
 
-    bowtie2 -x ${refgenome} -1 gamete_libx_R1_clean.fastq.gz -2 gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o gamete_ManualCurated.bam -; samtools depth gamete_ManualCurated.bam > gamete_ManualCurated.depth.txt; samtools index gamete_ManualCurated.bam
+    refgenome=/path/to/curated_asm/manually_curated.fasta
+    bowtie2 -x ${refgenome} -1 /path/to/reads/gamete_libx_R1_clean.fastq.gz -2 /path/to/reads/gamete_libx_R2_clean.fastq.gz -p 20 | samtools view -@ 20 -bS - | samtools sort -@ 20 -o gamete_ManualCurated.bam -; samtools depth gamete_ManualCurated.bam > gamete_ManualCurated.depth.txt; samtools index gamete_ManualCurated.bam
 
 Get vcf and variants (a file of ploidy need, columns are '\t'-separated)
 
@@ -130,7 +149,10 @@ Note, $6 is mapping quality; $7 is coverage of alt allele, we can try with
 
     awk '$6>=100 && $7>=60 && $7<=140 && $7/$8>=120 && $7/$8<=280 && $8>=0.38 && $8<=0.62' /path/to/20200426_converted_variant.txt > final_snp_markers.txt
 
-##### Step 6. 10x Genomics barcode correction
+##### Step 6. 10x Genomics barcode correction and nuclei separation
+
+    wd=/path/to/individual_nuclei_extraction/
+    cd ${wd}
 
 We use an artifical reference from almond at chr-level (in other cases, one can select a closely-related species with chr-level assembly):
 
@@ -147,7 +169,7 @@ This will create a new reference folder of "/refdata-almond_genome/".
 
 Correct 10x Genomics barcodes (note, if there are multiple libraries, this step needs to be done library by library, as same barcodes might be shared across libraries. However, different runs of the same library can be run together by setting option --sample=libx-run-1,libx-run-2\[,...\]),
 
-    cellranger-dna cnv --id=4279_A_run615_cellranger --reference=/path/to/refdata-almond_genome/ --fastq=/path/to/gamete_raw_reads/ --sample=4279_A_run615_SI-GA-D4 --localcores=20 --localmem=30
+    cellranger-dna cnv --id=4279_A_run615_cellranger --reference=/path/to/refdata-almond_genome/ --fastq=/path/to/reads/ --sample=4279_A_run615_SI-GA-D4 --localcores=20 --localmem=30
 
 Sort the bam (from the above, which is with corrected barcode information) with read name
 
@@ -199,15 +221,18 @@ Merge parts of read extraction
 
 ##### step 7. Read alignment and variant calling for each gamete nuclei
 
+    wd=/path/to/individual_nuclei_read_align_var_calling/
+    cd ${wd}
+
 Prepare ploidy file,
 
     echo "*	*	*	*	1" > ploidy1
 
 Align individual nuclei to manually curated genome (see Step 4.),
 
-    refgenome=manually_curated.fasta
+    refgenome=/path/to/curated_asm/manually_curated.fasta
     while read bc; do
-    	cd /path/to/cells_sep/${bc}
+    	cd /path/to/individual_nuclei_extraction/cells_sep/${bc}
     	bowtie2 -p 1 -x ${refgenome} -1 ${bc}_R1.fastq.gz -2 ${bc}_R2.fastq.gz 2> bowtie2.err | samtools view -@ 1 -bS - | samtools sort -@ 1 -o part1_${bc}.bam -
     	bcftools mpileup -Oz -o bt2_${bc}_PE_mpileup.gz -f ${refgenome} part1_${bc}.bam
     	bcftools call -A -m -Ov --ploidy-file /path/to/ploidy1 bt2_${bc}_PE_mpileup.gz > bt2_${bc}_PE.vcf
@@ -220,9 +245,12 @@ Note, at this step, there is possiblity to figure out which nuclei could be rela
 
 ##### Step 8. Extract allele count (individual gamete nuclei) at SNP markers (from Step 5.)
 
+    wd=/path/to/individual_nuclei_read_align_var_calling/
+    cd ${wd}
+
     while read bc; do
-    	cd /path/to/cells_sep/${bc}
-    	SHOREmap extract --marker /path/to/final_snp_markers.txt --chrsizes /path/to/manually_curated.chrsizes --folder . --consen 20200426_converted_consen.txt
+        cd /path/to/individual_nuclei_extraction/cells_sep/${bc}
+        SHOREmap extract --marker /path/to/final_snp_markers.txt --chrsizes /path/to/manually_curated.chrsizes --folder . --consen 20200426_converted_consen.txt
     done < barcode_over_5000rpairs.list
 
 ##### Step 9. Phasing SNPs within gamete genomes.
@@ -342,7 +370,7 @@ This finally leads to,
 
 Align PacBio reads to the manully curated assembly
 
-    refgenome=/path/to/manually_curated.fasta
+    refgenome=/path/to/curated_asm/manually_curated.fasta
     minimap2 -ax map-pb -t 4 ${refgenome} /path/to/long_reads_raw.fa > pacbio_manual_purged_ref.sam
 
 Separate longs with phased snps and dels in each linkage group,
@@ -460,9 +488,9 @@ Scaffod the contigs into chromosome-level assemblies for each haplotype-assembly
     refmapfa=../scaffolded_final_manual_upd_map_group8.fa
     querylab=asm8
     #
-    # for each of the above eight configurations, do ragoo as below:
+    # for each pair of the above eight configurations, do ragoo as below:
     #
-    for PM in PPP MMM; do  
+    for PM in PPP MMM; do
         mkdir ${querylab}_scaffolding_${PM}
         cd ${querylab}_scaffolding_${PM}
         queryfa=ln_${querylab}.txt_${PM}_pbreads.fa.contigs.fasta # path required by ragoo
