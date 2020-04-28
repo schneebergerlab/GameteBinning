@@ -108,7 +108,7 @@ Re-check haplotigs (blast them with the curated genome, i.e., the one built up w
 
     db=curated.fasta
     makeblastdb -in ${db} -dbtype nucl > formatdb.log
-    contigpath=/path/to/tmp_purge_haplotigs/CONTIGS/
+    contigpath=/path/to/curated_asm/tmp_purge_haplotigs/CONTIGS/
     grep '>' curated.haplotigs.fasta | sed 's/ /\t/g' | cut -f1 | sed 's/>//' > haplotigs_as_predicted_by_purgeHaplotig.list
     while read ctg; do q=${ctg}.fasta; blastn -query ${contigpath}/${q} -db ${db} -out ${q}.oblast -outfmt 7 > blastall_blastn.log;done < ../haplotigs_as_predicted_by_purgeHaplotig.list
 
@@ -142,6 +142,10 @@ Get vcf and variants (a file of ploidy need, columns are '\t'-separated)
 Convert the variant format to plain text
 
     SHOREmap convert --marker gamete_ManualCurated.vcf --folder shoremap_converted --indel-size 5 --min-AF 0.1 -runid 20200426
+
+This leads to 
+
+    20200426_converted_variant.txt
 
 Filtering for allelic snps. This needs to tune quality and coverage according to the specific data. For allele frequency, as we are looking for allelic snps, it should be around 0.5; while the coverage on the alt allele should be around half the genome wide average. In the meanwhile, the total coverage should not be too small or too large. In my case, the avg is around 171x (and half:84x), and we can try the cutoffs below:
 
@@ -250,7 +254,7 @@ Note, at this step, there is possiblity to figure out which nuclei could be rela
 
     while read bc; do
         cd /path/to/individual_nuclei_extraction/cells_sep/${bc}
-        SHOREmap extract --marker /path/to/final_snp_markers.txt --chrsizes /path/to/manually_curated.chrsizes --folder . --consen 20200426_converted_consen.txt
+        SHOREmap extract --marker /path/to/marker_creation/final_snp_markers.txt --chrsizes /path/to/curated_asm/manually_curated.chrsizes --folder . --consen 20200426_converted_consen.txt
     done < barcode_over_5000rpairs.list
 
 ##### Step 9. Phasing SNPs within gamete genomes.
@@ -261,9 +265,9 @@ Note, at this step, there is possiblity to figure out which nuclei could be rela
 Prepare a meta-file of subset_consen_cells.txt, where each line points to a consensus file of a specific barcode: /path/to/cells_sep/barcodeX/shoremap_converted/extracted_consensus_0.txt
 
     date=20200426
-    marker=/path/to/final_snp_markers.txt
+    marker=/path/to/marker_creation/final_snp_markers.txt
     cells=/path/to/subset662_consen_cells.txt
-    sizes=/path/to/manually_curated.chrsizes
+    sizes=//path/to/curated_asm/manually_curated.chrsizes
     asPollinator_1.0 --marker ${marker} --pollen ${cells} -o z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81 --corr --ims 0.81 --size ${sizes} > z${date}_phasing_with_correction_XXX_samples_full_markerSet_scorep81.log
 
 Collect the PM pattern of each nuclei at each contig for next step of haploid evaluation,
@@ -307,8 +311,8 @@ Of course, for different species, this would be different.
     wd=/path/to/del_marker_definition/
     cd ${wd}
 
-    marker=/path/to/final_snp_markers.txt
-    sizes=/path/to/manually_curated.chrsizes
+    marker=/path/to/marker_creation/final_snp_markers.txt
+    sizes=/path/to/curated_asm/manually_curated.chrsizes
     mkdir define_del_like_regions
     cd define_del_like_regions
     del_marker_finder --marker ${marker} --min-del-size 2000 --chrsizes ${sizes} -o del_like > define_del_isize2000.log
@@ -467,7 +471,7 @@ This leads to 16 haplotype-specific assemblies, each representing for one haploi
 
 Create a pseudo-reference chromosome for each linkage group with manually curated assembly (from Step 4) and the final complete genetic map (from Step 14: asCaffolder_v2),
 
-    fa=/path/to/manually_curated.fasta
+    fa=/path/to/curated_asm/manually_curated.fasta
     updatedgm=/path/to/updated_genetic_map_folder/
     >scaffolder.log
     for i in {1..8}; do 
