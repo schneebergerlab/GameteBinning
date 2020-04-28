@@ -241,7 +241,7 @@ Collect the PM pattern of each nuclei at each contig for next step of haploid ev
 
 ##### Step 10. haploidy level evaluation
 
-Find potential transitions between two genotypes with the PM pattern of each nuclei at each contig from asCellseparator,
+Find potential transitions between two genotypes with the PM pattern of each nuclei at each contig from asPollinator_1.0,
 
     contigPM=/path/to/pattern_nuclei_full_markerSet_list.txt
     ./noise_checker ${contigPM} > checkling_full_markerSert.log
@@ -406,4 +406,76 @@ Here we assembled each haplotye for each linkage group, using flye
        done
     done
 
-This leads to 16 haplotype-specific assemblies, each representing for one haploid genome in each of the eight linkage groups, which can be further polished with its respective Pacbio reads.
+This leads to 16 haplotype-specific assemblies, each representing for one haploid genome in each of the eight linkage groups.
+
+##### Step 17. Scaffolding haplotype-specific assemblies to chromosome-level
+
+Create a pseudo-reference genome from manually curated assembly (from Step 4) and genetic map (from Step 14: asCaffolder_v2),
+
+    fa=/path/to/manually_curated.fasta
+    updatedgm=/path/to/updated_genetic_map_folder/
+    >scaffolder.log
+    for i in {1..8}; do 
+        scaffolder ${updatedgm}/final_manual_upd_map_group${i}.txt ${fa} >> scaffolder.log
+    done
+
+Scaffod the contigs into chromosome-level assemblies for each haplotype-assembly in each linkage group,
+
+    scaf_dir=/path/to/do/scaffolding/
+    cd ${scaf}
+    # Caution: only when linking fasta files (from Step 16) at this relative location can Rogoo find them!!!
+    for i in {1..8}; do ln -s /path/to/flye_${i}.txt_MMM_pbreads.fa/assembly.fasta ln_asm${i}.txt_MMM_pbreads.fa.contigs.fasta; done
+    for i in {1..8}; do ln -s /path/to/flye_${i}.txt_PPP_pbreads.fa/assembly.fasta ln_asm${i}.txt_PPP_pbreads.fa.contigs.fasta; done
+    # CAUTION: genetic-map scaffolds - path setting below required by ragoo
+    ## query=pacbio assembly for linkage group 1.txt to ref=genetic scaffolds 2
+    refmapfa=../scaffolded_final_manual_upd_map_group2.fa
+    querylab=asm1
+    for PM in PPP MMM; do  
+        mkdir ${querylab}_scaffolding_${PM}
+        cd ${querylab}_scaffolding_${PM}
+        queryfa=ln_${querylab}.txt_${PM}_pbreads.fa.contigs.fasta # path required by ragoo
+        ragoo.py ../${queryfa} ${refmapfa} -C
+        cd ..
+    done
+
+    ## query=pacbio assembly for linkage group 2.txt to ref=genetic scaffolds 7
+    refmapfa=../scaffolded_final_manual_upd_map_group7.fa
+    querylab=asm2
+    ## query=pacbio assembly for linkage group 3.txt to ref=genetic scaffolds 3
+    refmapfa=../scaffolded_final_manual_upd_map_group3.fa
+    querylab=asm3
+    ## query=pacbio assembly for linkage group 4.txt to ref=genetic scaffolds 4
+    refmapfa=../scaffolded_final_manual_upd_map_group4.fa
+    querylab=asm4
+    ## query=pacbio assembly for linkage group 5.txt to ref=genetic scaffolds 6
+    refmapfa=../scaffolded_final_manual_upd_map_group6.fa
+    querylab=asm5
+    ## query=pacbio assembly for linkage group 6.txt to ref=genetic scaffolds 1
+    refmapfa=../scaffolded_final_manual_upd_map_group1.fa
+    querylab=asm6
+    ## query=pacbio assembly for linkage group 7.txt to ref=genetic scaffolds 5
+    refmapfa=../scaffolded_final_manual_upd_map_group5.fa
+    querylab=asm7
+    ## query=pacbio assembly for linkage group 8.txt to ref=genetic scaffolds 8
+    refmapfa=../scaffolded_final_manual_upd_map_group8.fa
+    querylab=asm8
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+
+
+
