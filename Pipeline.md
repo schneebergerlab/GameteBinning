@@ -282,7 +282,7 @@ Collect the PM pattern of each nuclei at each contig for next step of haploid ev
 Find potential transitions between two genotypes with the PM pattern of each nuclei at each contig from asPollinator_1.0,
 
     contigPM=/path/to/snp_phasing/pattern_nuclei_full_markerSet_list.txt
-    ./noise_checker ${contigPM} > checkling_full_markerSert.log
+    noise_checker ${contigPM} > checkling_full_markerSert.log
     sort -k1,1n haplotype_swaps_observed_in_cells.txt > haplotype_swaps_observed_in_cells_sorted.txt
     rm haplotype_swaps_observed_in_cells.txt
 
@@ -304,7 +304,7 @@ This is done with JoinMap (interactive work with the software in windows), leadi
     genetic_map_limited_markers.txt --genetic map with 216 ordered markers, see here /path/to/GameteBinning/file_aux/GMaps/genetic_map_limited_markers.txt
     zphase_contigs_linksage.txt     --linkage groups with 653 non-ordered markers, see here /path/to/GameteBinning/file_aux/LGs/zphase_contigs_linksage.txt
 
-Of course, for different species, this would be different.
+Note, for different species, this would be different. We will later use the 216-ctg genetic map as a backbone (together with the phasing-of-contigs given by the 653-grouping) to insert un-mapped contigs, i.e., to get a more complete genetic map.
 
 ##### Step 12. Deletion marker definition (= select large regions without SNP markers)
 
@@ -361,7 +361,7 @@ Note, the read counts will be normalized (to RPKM) during del-marker phasing and
 
 This leads to
 
-    ./${date}_tmp_pollen_del_like_genotypes_addi/s2_genotype_contig_seq_del_like.txt
+    ${date}_tmp_pollen_del_like_genotypes_addi/s2_genotype_contig_seq_del_like.txt
 
 Complete the genetic map using del-like markers
 
