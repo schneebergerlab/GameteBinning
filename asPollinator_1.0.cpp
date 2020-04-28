@@ -1,14 +1,10 @@
 /* this function, given a SNP marker file and genotype data of multiple pollen samples
    phase SNPs to reconstruct haplotypes.
-   
    species targeted: heterozygous
-   
    TODO: consider small indels as markers
-   
    v5:  targeted checking like tig00004000_pilon, why there are enough markers but not correctly phased!
    v6:  output crossovers
    v6.1 output crossovers with detailed marker positions
-   
    Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de 
    2019-2020
 */ 
@@ -69,7 +65,7 @@ double minCOscore  = 0.64; //
 bool collect_marker_info(const char*                        file, 
                          map<string, map<unsigned long, ALLELE> >* mkr);
 bool collect_contig_size(string                             sizefile, 
-                         map<string, unsigned long>*        contigsize);                         
+                         map<string, unsigned long>*        contigsize);
 bool get_options(        int                                argc, 
                          char*                              argv[],
                          string*                            filemark,
@@ -79,10 +75,10 @@ bool get_options(        int                                argc,
                          double*                            lodcutoff,
                          double*                            minCOscore,
                          string*                            outprefix);
-bool get_base_position(  string                             base,                         
+bool get_base_position(  string                             base,
                          int*                               pos);
 bool get_pollen_allele(  string                             pollenfile, 
-                         map<string, map<unsigned long, ALLELE> >* mkr);                         
+                         map<string, map<unsigned long, ALLELE> >* mkr);
 bool cluster_pollens(    map<int, POLLEN>                   pollens, 
                          map<int, POLLEN>*                  maCluster,
                          map<int, POLLEN>*                  paCluster,
@@ -90,14 +86,14 @@ bool cluster_pollens(    map<int, POLLEN>                   pollens,
                          map<int, POLLEN>*                  pollens_updated);
 bool flip_pcluster(      map<int, POLLEN>*                  paCluster,
                          string                             matGT,
-                         string                             patGT);                         
+                         string                             patGT);
 bool get_similarty(      string                             matGT, 
                          string                             patGT, 
                          string                             pollenGT,
-                         string*                            pattern,                   
+                         string*                            pattern,
                          unsigned long*                     matscore, 
                          unsigned long*                     patscore);
-// correct raw haplotypes from assembly with pollen haplotypes                         
+// correct raw haplotypes from assembly with pollen haplotypes
 bool correct_haplotype(  map<int, POLLEN>                   pollens,
                          map<int, POLLEN>*                  pollens_corrected);
 bool correct_haplotype2_with_consensus(
@@ -111,13 +107,13 @@ bool correct_haplotype3_with_pmClusterCnt(
                          string*                            matGT,
                          string*                            patGT);    
 bool get_PM_count(       string                             posPattern, 
-                         CLUSCNT*                           posCNT);           
+                         CLUSCNT*                           posCNT);
 double calculate_lod(    string                             patA, 
-                         string                             patB);                                                            
+                         string                             patB);
 bool order_linked_contigs(map<string, BIPAT>                contigPollenGTSeq, 
-                         string                             tmpfolder);                         
+                         string                             tmpfolder);
 bool reverse_contig_GT(  string                             contig_GT, 
-                         string*                            contig_GT_rev);       
+                         string*                            contig_GT_rev);
 bool get_match_score(    string                             contig_GT1, 
                          string                             contig_GT2, 
                          int*                               score);
@@ -493,7 +489,7 @@ int main(int argc, char* argv[])
         }
         else ;
         string matGT_corrected = pollens_corrected[0].poSeq; // _corrected maternal backbone ---------------------------
-        string patGT_corrected = pollens_corrected[0].poAll; // _corrected paternal backbone ---------------------------                    
+        string patGT_corrected = pollens_corrected[0].poAll; // _corrected paternal backbone ---------------------------
         // 
         // sub step 2. output clustered pollens: pollens_corrected: first clustering
         map<int, POLLEN> maCluster;
@@ -1077,12 +1073,12 @@ bool find_bed(string poPat, string pmflag, int pollenid, bool* out, vector<strin
         {
             thisend            = posp;
             thisGT             = "P";
-            thisend_exclude_u  = posp;                         
+            thisend_exclude_u  = posp;
         }else
         {
             thisend            = posm;
             thisGT             = "M";
-            thisend_exclude_u  = posm;            
+            thisend_exclude_u  = posm;
         }
         for(int jj=thisend+1; jj<poPat.size(); jj ++)
         {
@@ -1440,7 +1436,7 @@ string get_break_pos(string           poPat,
             // but found "M" on left end
             if(pmstring.compare("MP") == 0 )
             {            
-               // at least 1 effective "M"; at least 1/3 "M"; first position was "M"                
+               // at least 1 effective "M"; at least 1/3 "M"; first position was "M"
                 if((poPatbk.substr(0, 1)).compare("M") == 0 && 
                    c2Lef > 0 && c2Lef >= poPatbk.size()/3.0)
                 {
@@ -1456,7 +1452,7 @@ string get_break_pos(string           poPat,
             // but found "M" on right end
             if(pmstring.compare("PM") == 0)
             {            
-               // at least 1 effective "M"; at least 1/3 "M"; last position was "M"                                
+               // at least 1 effective "M"; at least 1/3 "M"; last position was "M"
                 if((poPatbk.substr(poPatbk.size()-1, 1)).compare("M") == 0 &&     
                    c2Rig > 0 && c2Rig >= poPatbk.size()/3.0)
                 {
@@ -1514,7 +1510,7 @@ string get_break_pos(string           poPat,
             // but found "M" on left end 
             if(pmstring.compare("MP") == 0)
             {            
-                // and at least 5 effective "M" and first position was "M"                
+                // and at least 5 effective "M" and first position was "M"
                 if((poPatbk.substr(0, 1)).compare("M") == 0 && c2Lef >= 5)
                 {
                     checkfrom = "13";
@@ -1717,7 +1713,7 @@ bool correct_haplotype3_with_pmClusterCnt(map<int, POLLEN> maCluster,
     }  
     cout << "   Check: 3rd corrected haplotypes: " << endl
          << "\t"  << *matGT                        << endl
-         << "\t"  << *patGT                        << endl;                  
+         << "\t"  << *patGT                        << endl;
     //    
     return true;
 }                        
@@ -2354,7 +2350,7 @@ bool order_linked_contigs(map<string, BIPAT> contigPollenGTSeq, string tmpfolder
                         ////      << " "    << "[color=red, penwidth=1, arrowsize=1, label=" << this_lod << "];";
                         //// contigBestLods.edge2  = sstmp.str(); 
                         //// // collect edge                        
-                        //// collected_edge.insert(std::pair<string, int>(this_contig_ID + "->" + tmp2_contig_ID, 1));                                                                            
+                        //// collected_edge.insert(std::pair<string, int>(this_contig_ID + "->" + tmp2_contig_ID, 1));
                     } else;
                 }
             }        

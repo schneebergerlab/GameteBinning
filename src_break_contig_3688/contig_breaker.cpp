@@ -1,5 +1,4 @@
 /* this function breaks contigs of very likely chimeric.
-
    Hequan Sun, MPIPZ Email:sunhequan@gmail.com/sun@mpipz.mpg.de
 */
 #include                   <stdio.h>
@@ -125,7 +124,6 @@ int main(int argc, char* argv[])
         {
             ofp << line << endl;
         }
-
     }
     ifp.close();
     ofp.close();

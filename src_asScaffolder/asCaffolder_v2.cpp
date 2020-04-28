@@ -4,21 +4,16 @@
         and         
         s2_genotype_contig_seq.txt               -- from asPollinator         -- (X3:all raw contigs     PM patterns) 
         s2_genotype_contig_seq_del_like.txt      -- from del_marker_genotyper -- (X4:all raw del-regions PM patterns)    
-            
     Scaffold all contigs in linkage groups ( = complete linkage groups with PM-phasing and contig-ordering). 
-    
     Note 1: contigs X1 <= a subset of X2 <= a subset of X3
     Note 2: contigs of X4 might be included in X1/2/3; 
             some=X5 of X4 might not =>X5 needs to be linkage-grouped, phased and ordered.    
     Note 3: contig key format: "contig\tleft" or "contig\tright" for X1/2/3; for X4, coordinates also considered.
-        
     Note 4: on output, for each genetic map group, 
             P/M values assigned to del-like patterns can refer to different parents;
             as phasing can not be performed inter-groups. In the same genetic map group, P/M values should be 
             consistently naming the same parents.
-       
     2020-02-11 13:28     updated: hap_low can be updated as hom_low according to cell support.
-    
     Written by Hequan Sun, MPIPZ, Email: sunhequan@gmail.com
 */
 #include         <map>
@@ -1249,8 +1244,6 @@ bool complete_genetic_map_del_based(map<string, map<unsigned long, DELMARKER> > 
             contigMarkerPM_updated.insert(std::pair<string, string>(this_right_id+"_del", max_pmpat));                
             cout << "   check: updating genetic map " << max_gmapfile  << " done. " << endl;            
             */
-            
-                                            
         }
         // update this_del_like again according to final decision; update phasing status
         cout << "            Some more details about insertion of the del-like marker: " << endl;                

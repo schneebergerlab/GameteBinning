@@ -1,10 +1,7 @@
 /*
     Given 
-    
         a list of asPollinator-phased snp markers
-        
     find the regions with large gap of certain size, e.g, >5 kb, to use them as "deletion" markers.
-    
     2019-12-02 by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de
 */
 #include         <map>

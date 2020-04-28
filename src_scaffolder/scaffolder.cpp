@@ -1,7 +1,5 @@
 /* this function, given genetic map file, and initial fasta file, make contigs into chrs.
-   
    Written by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de
-
 */
 #include                   <stdio.h>
 #include                  <string.h>

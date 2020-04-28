@@ -1,19 +1,14 @@
 /*
     Given 
-    
         a list of asPollinator-phased snp markers
         linkage-analysis correction on P/Ms,
         linkage-analysis phased del-like P/Ms,
         linkage group of snp-contig-PM contigs,
         a bam file with pacbio reads aligned,
-        
     separate pacbio reads into 2*n clusters.
-    
     Note: there is 500 bp cutoff to consider del-like region overlapping a pacbio read.
-    
     2019-11-09 Started: 
     2020-01-08 Updated: consider del-like markers (already phased to JoinMap-phased snp-marker contigs by asCaffolder_v2).
-    
     Written by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de
 */
 #include         <map>

@@ -1,11 +1,8 @@
 /*
     Given 
-    
         a list of del_marker_finder defined bed del-like regions, and
         the samtools depth defined depth,
-        
     define del-like regions as hap, hom or repeat.
-    
     2019-12-28 by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de
 */
 #include         <map>
@@ -233,13 +230,11 @@ bool get_del_bed(string fregion, map<string, unsigned long>* regions)
             cout << "   Warning: skipped insufficient line info at " << line << endl;
             continue;
         }
-        
         string        ctg = lineinfo[0]; 
         string        sta = lineinfo[1]; 
         string        end = lineinfo[2]; 
         string        key = ctg + "\t" + sta + "\t" + end;
         regionnum ++;     
-        
         map<string, unsigned long >::iterator ctgitr;
         ctgitr = (*regions).find(key);
         (*regions).insert(std::pair<string,unsigned long>(key, 0));

@@ -1,11 +1,8 @@
 /*
     Given 
-    
         a list of read counts (by "bedtools coverage -counts") at del_marker_finder-defined del-like markers
-        
     1. normalize read counts according to total aligned reads        
     2. define/classify hap-chr and hom-chr regions.
-    
     2019-12-09 started
     2020-01-08 updated: using RPKM for genotyping a del-like region.
     Written by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de

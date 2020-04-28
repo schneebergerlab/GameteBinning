@@ -2,7 +2,6 @@
    Function: remove 16 bp barcode and 6 bp linker sequence from read 1.
    Written by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de
 */
-
 #include <iostream>
 #include  <fstream>
 #include  <sstream>
@@ -15,9 +14,7 @@
 #include <dirent.h>
 #include <assert.h>
 #include <time.h>  /* clock_t, clock, CLOCKS_PER_SEC */
-
 #include "split_string.h"
-
 // zlib library for ungzip/gzip in c++ style
 #include   "./gzlib/gzstream.h"
 // ogzstream
@@ -25,9 +22,8 @@
 bool trim_reads(char* fastqfilename1, 
                     char* fastqfilename2, 
                     int   barcode_len);
-bool create_folder(string tmpfolder);                    
+bool create_folder(string tmpfolder);
 using namespace std;
-
 int main(int argc, char* argv[])
 {
     if(argc < 3)
@@ -50,9 +46,7 @@ int main(int argc, char* argv[])
     {
         return false;
     }
-    
     cout << "\n  Total time consumed : " << (float)(clock()-tbeg)/CLOCKS_PER_SEC << " seconds.\n" << endl;
-    
     return 0;
 }
 
@@ -164,28 +158,4 @@ bool create_folder(string tmpfolder)
     //
     return true;
 }
-/*
-    // create an intermediate folder for collecting each barcoded-genome
-    string tmpfolder = outprefix+"_tmp_pollen_genotypes";
-    DIR* dir = opendir(tmpfolder.c_str());
-    if (dir)
-    {
-        // Directory exists. 
-        closedir(dir);
-    }
-    else if (ENOENT == errno)
-    {
-        // Directory does not exist.
-        const int dir_err = mkdir(tmpfolder.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-        if (dir_err == -1)
-        {
-            cout << "   Error: cannot create directory " << tmpfolder << endl;
-            return false;
-        }
-    }
-    else;
-
-*/
-
-
 

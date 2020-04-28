@@ -1,6 +1,5 @@
 /* this function, given a number of cells with sequences of paternal and maternal patterns, 
    check number of potential swaps of alleles within each cells 
-   
    Hequan Sun, MPIPZ, Email: sunhequan@gmail.com/sun@mpipz.mpg.de
 */
 #include                   <stdio.h>
@@ -19,7 +18,6 @@
 #include                  <algorithm>
 #include            "split_string.h"
 //
-
 //
 using namespace std;
 //

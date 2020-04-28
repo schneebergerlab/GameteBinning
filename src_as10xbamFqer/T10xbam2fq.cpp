@@ -1,5 +1,5 @@
-/* this function converts a readname-sorted 10x bam (from cellranger-dna cnv outpt) to fastq, with corrected barcodes (raw barcodes in readname).
-
+/* 
+this function converts a readname-sorted 10x bam (from cellranger-dna cnv outpt) to fastq, with corrected barcodes (raw barcodes in readname).
 */
 #include   <iostream>
 #include    <fstream>
@@ -14,9 +14,7 @@
 #include   <assert.h>
 #include     <time.h>  /* clock_t, clock, CLOCKS_PER_SEC */
 #include "split_string.h"
-
 #include "./gzlib/gzstream.h"
-
 int main(int argc, char* argv[])
 {
     if(argc < 3)
@@ -133,7 +131,6 @@ int main(int argc, char* argv[])
             }  
             corrbcod = line.substr(pos1, pos2-pos1-2); // excluding 2 additional positions for "-1"
         }
-      
         //
         int hexflag = strtol(lineinfo[1].c_str(), NULL, 0);
         // get read as R1 or R2

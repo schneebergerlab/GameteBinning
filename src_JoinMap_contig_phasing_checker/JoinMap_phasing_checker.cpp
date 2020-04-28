@@ -4,18 +4,13 @@
 	s2_genotype_contig_seq.txt
 
    for the same set of pollen samples, 
-   
    and 
-   
    corresponding JoinMap contigs phasing status from Jose,
    
    	2019.10.17.pb_pollen_markers_0.1_nan_filtered_Group4_Map2_unicode.txt
    	(caution on window/linux file conversion: line ending might be different resulting in errors!)
-   
    check the differences in genotype determination.
-   
    Written by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de
-   
 */
 #include       <map>
 #include    <string>
@@ -28,7 +23,6 @@
 #include  <stdlib.h>
 #include  <assert.h>
 #include "split_string.h"
-
 struct CONTIG
 {
     string left;

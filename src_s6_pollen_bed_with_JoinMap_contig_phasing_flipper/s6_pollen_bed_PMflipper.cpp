@@ -1,16 +1,11 @@
 /* given    
-        
-        JoinMap phasing status of a group contigs from Jose: 1.txt
+        JoinMap phasing status of a group contigs from: 1.txt
    	(caution on window/linux file conversion: line ending might be different resulting in errors!)
    	
    and 
-   
         a path to ./asPollinator-run/ before 
-   
    update the PM values in /s6_PM_pollen_bed_ctgwise/s6_PM_region_pollens_at_contig_*_pilon.txt
-   
        caution on 3688 and 3826 contigs which each was manually separated as two sub-contigs (ids-need-change).
-   
    Written by Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de
 */
 #include       <map>
@@ -27,7 +22,6 @@
 #include  <sys/stat.h>
 #include    <dirent.h>
 #include "split_string.h"
-                 
 bool swap_pattern(bool this_flip, string* PM, string* precluster);
 //
 using namespace std;

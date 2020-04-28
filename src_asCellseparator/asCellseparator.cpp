@@ -1,7 +1,6 @@
 /*
    note: we remove the first 16 bp from Read 1 (and quality string)!
    update: remove 16 bp barcode and 6 bp linker sequence from read 1.
-   
    Writen by Hequan Sun, MPIPZ Email: sunhequan@gmai.com
 */
 #include   <iostream>
@@ -17,9 +16,7 @@
 #include   <assert.h>
 #include     <time.h>  /* clock_t, clock, CLOCKS_PER_SEC */
 #include "split_string.h"
-
 #include "./gzlib/gzstream.h"
-
 struct READ
 {
     string R1;// name \n seq \n + \n quality
@@ -36,7 +33,6 @@ bool get_barcode_stat(char* fastqfilename1, int barcode_len, int effective_cutof
 bool output_tmp_reads(map<string, vector<READ> >* myBCReads, int ipart); // only output those with 100 more reads
 bool separate_reads(char* fastqfilename1, char* fastqfilename2, int barcode_len, map<string, unsigned long> barcode_stat);
 using namespace std;
-
 int main(int argc, char* argv[])
 {
     if(argc < 7)
@@ -414,6 +410,4 @@ bool create_folder(string tmpfolder)
     //
     return true;
 }
-
-
 
