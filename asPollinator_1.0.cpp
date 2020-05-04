@@ -5,6 +5,7 @@
    v5:  targeted checking like tig00004000_pilon, why there are enough markers but not correctly phased!
    v6:  output crossovers
    v6.1 output crossovers with detailed marker positions
+   v6.1 record potential bad markers for further filtering
    Hequan Sun, MPIPZ, Email:sunhequan@gmail.com/sun@mpipz.mpg.de 
    2019-2020
 */ 
@@ -95,7 +96,8 @@ bool get_similarty(      string                             matGT,
                          unsigned long*                     patscore);
 // correct raw haplotypes from assembly with pollen haplotypes
 bool correct_haplotype(  map<int, POLLEN>                   pollens,
-                         map<int, POLLEN>*                  pollens_corrected);
+                         map<int, POLLEN>*                  pollens_corrected,
+                         string                             ctgid);
 bool correct_haplotype2_with_consensus(
                          map<int, POLLEN>                   maCluster,
                          map<int, POLLEN>                   paCluster,
@@ -482,7 +484,7 @@ int main(int argc, char* argv[])
             cout << "   Info: provided parental haplotypes not corrected as user required." << endl;
             pollens_corrected = pollens;
         }else   
-        if(!correct_haplotype(pollens, &pollens_corrected))
+        if(!correct_haplotype(pollens, &pollens_corrected, ctgid))
         {
             cout << "   Error: 1st correction failed. " << endl;
             return false;
@@ -1881,7 +1883,8 @@ bool flip_pcluster(map<int, POLLEN>* paCluster, string matGT, string patGT)
 //
 // correct raw haplotypes from assembly with pollen haplotypes                         
 bool correct_haplotype(  map<int, POLLEN>                   pollens,
-                         map<int, POLLEN>*                  pollens_corrected)
+                         map<int, POLLEN>*                  pollens_corrected, 
+                         string                             ctgid)
 {
     // this is stage 1 correction: using pollen individuals to correct assembled m/paternal haplotypes -used
     /*
@@ -1906,10 +1909,20 @@ bool correct_haplotype(  map<int, POLLEN>                   pollens,
        GTGCATCGCACACCTTGGUUUTGGTTCUAAUUTGUTAGCGATACTAAGTACGCTCTCGCUC	13_x
        GNGCATCGCANACCTTGNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNUC	14_x
        NNNNNNNNNGTGTTCCAATAGCACACNGGGAGCANGGATTTGNNNNNNNNNNNNNNNNNNN	15_x    
+       
+       struct POLLEN
+       {
+           string poSeq;   // seq at markers for pollen haplotype
+           string poAll;   // over all, can be determined as 'M', 'P', 'MP', 'PM', or 'N'
+           string poPat;   // string like MMMMMMppMMMMMMMpMMMMMMMM: indicating parental genotypes
+           vector<unsigned long> mkrpos; // position of markers for this contig
+       };
     */
     // this is to correct maternal and paternal haplotypes, or phasing
     string matGT = pollens[0].poSeq; // initial maternal backbone
     string patGT = pollens[0].poAll; // initial paternal backbone
+    //
+    vector<unsigned long> mkrpostmp = pollens[0].mkrpos;
     // update result
     if(matGT.size() == 1 && patGT.size() == 1)
     {
@@ -1997,6 +2010,9 @@ bool correct_haplotype(  map<int, POLLEN>                   pollens,
     string lastPat = "";
     while(positr != positr_end)
     {
+        // marker positioning: this dimmer <= this_paired_mkr_pos + (this_paired_mkr_pos+1)
+        unsigned long this_paired_mkr_pos = (*positr).first;
+        //
         map<string, int> dimers_at_pos;
         dimers_at_pos = (*positr).second;
         //
@@ -2139,7 +2155,11 @@ bool correct_haplotype(  map<int, POLLEN>                   pollens,
                 cout << this_dimer << ":" << (*oditr).second << "\t";
             }
             oditr ++;
-        }               
+        }
+        // record paired-marker positioning
+        cout << ctgid << "\t" << mkrpostmp[this_paired_mkr_pos]   << "\t"
+             <<                  mkrpostmp[this_paired_mkr_pos+1] << "\tmkr_fil\t";
+        //               
         if(mcorrected)
         {
             cout << "\tcorrected";
